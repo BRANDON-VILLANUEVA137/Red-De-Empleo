@@ -1,0 +1,219 @@
+
+
+nav .logo {
+    font-size: 24px;
+    font-weight: 600;
+}
+
+
+
+
+nav ul li a:hover {
+    background-color: rgba(255, 255, 255, 0.2);
+    border-radius: 8px;
+}
+
+.btn {
+    background: #ff4d4d;
+    color: white;
+    padding: 10px 15px;
+    border-radius: 8px;
+    text-decoration: none;
+    font-weight: 500;
+    transition: 0.3s ease;
+}
+
+.btn:hover {
+    background: #cc0000;
+}
+
+/* ==== Contenedor del perfil ==== */
+.perfil-container {
+    max-width: 1000px;
+    margin: 50px auto;
+    padding: 30px;
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    text-align: center;
+}
+
+/* ==== Estilos de la información de la empresa ==== */
+.perfil-info {
+    text-align: center;
+    margin-bottom: 25px;
+}
+
+.perfil-foto {
+    width: 130px;
+    height: 130px;
+    border-radius: 50%;
+    object-fit: cover;
+    margin-bottom: 15px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+.perfil-info h1 {
+    font-size: 26px;
+    font-weight: 600;
+    color: #222;
+}
+
+.perfil-info p {
+    font-size: 16px;
+    color: #555;
+    margin: 5px 0;
+}
+
+/* ==== Secciones de servicios y vacantes ==== */
+.servicios, .vacantes {
+    text-align: left;
+    margin-top: 30px;
+    padding: 20px;
+    border-radius: 10px;
+    background: #f4f7fc;
+}
+
+.servicios h2, .vacantes h2 {
+    color: #0052d4;
+    border-bottom: 3px solid #0052d4;
+    padding-bottom: 5px;
+    margin-bottom: 15px;
+}
+
+ul {
+    list-style: none;
+    padding: 0;
+}
+
+ul li {
+    padding: 12px 15px;
+    margin: 8px 0;
+    border-radius: 8px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+    transition: 0.3s ease-in-out;
+}
+
+ul li:hover {
+    transform: translateX(5px);
+}
+
+/* ==== Botón de publicar vacante ==== */
+.vacantes .btn {
+    display: block;
+    width: fit-content;
+    margin: 20px auto;
+    
+    font-size: 16px;
+}
+
+.vacantes .btn:hover {
+    background: #003399;
+}
+
+/* Modal */
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.modal-contenido {
+    background: #fff;
+    padding: 25px;
+    border-radius: 10px;
+    width: 400px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    text-align: left;
+    font-family: Arial, sans-serif;
+}
+
+.modal h2 {
+    margin-top: 0;
+    font-size: 20px;
+    text-align: center;
+}
+
+.modal label {
+    display: block;
+    font-weight: bold;
+    margin-top: 10px;
+    font-size: 14px;
+}
+
+.modal input,
+.modal select,
+.modal textarea {
+    width: 100%;
+    padding: 8px;
+    margin-top: 5px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 14px;
+}
+
+.modal textarea {
+    resize: vertical;
+    height: 80px;
+}
+
+.cerrar {
+    float: right;
+    font-size: 20px;
+    font-weight: bold;
+    cursor: pointer;
+    color: #555;
+}
+
+.cerrar:hover {
+    color: red;
+}
+
+.guardar-btn {
+    width: 100%;
+    background: #007bff;
+    color: white;
+    border: none;
+    padding: 10px;
+    margin-top: 15px;
+    font-size: 16px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background 0.3s;
+}
+
+.guardar-btn:hover {
+    background: #0056b3;
+}
+
+
+/* ==== Diseño Responsivo ==== */
+@media (max-width: 768px) {
+    .perfil-container {
+        width: 90%;
+        padding: 20px;
+    }
+
+    nav {
+        flex-direction: column;
+        text-align: center;
+    }
+
+    nav ul {
+        flex-direction: column;
+        padding: 0;
+    }
+
+    .btn {
+        display: block;
+        margin: 5px auto;
+    }
+}
