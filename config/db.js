@@ -1,20 +1,20 @@
-// config/db.js
-import mysql from 'mysql2/promise'; // Versión promise recomendada
+import mysql from 'mysql2';
+import 'dotenv/config';
 
-const createConnection = async () => {
-  const connection = await mysql.createConnection({
-    host: process.env.DB_HOST || 'localhost',
-    user: process.env.DB_USER || 'root',
-    password: process.env.DB_PASSWORD || '',
-    database: process.env.DB_NAME || 'RED_DE_EMPLEO',
-    port: process.env.DB_PORT || 3306,
-    waitForConnections: true,
-    connectionLimit: 10,
-    queueLimit: 0
-  });
+const connection = mysql.createConnection({
+  host: process.env.DB_HOST,
+  user: process.env.DB_USER,
+  password: process.env.DB_PASSWORD,
+  database: process.env.DB_NAME,
+  port: process.env.DB_PORT
+});
 
+connection.connect((err) => {
+  if (err) {
+    console.error('❌ Error de conexión a MySQL:', err);
+    return;
+  }
   console.log('✅ Conexión a MySQL establecida correctamente');
-  return connection;
-};
+});
 
-export default createConnection;
+export default connection;

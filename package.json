@@ -2,6 +2,7 @@
   "name": "red_de_empleo",
   "version": "1.0.0",
   "description": "Backend para Red de Empleo",
+  "type": "module",
   "main": "app.js",
   "scripts": {
     "start": "node app.js",
