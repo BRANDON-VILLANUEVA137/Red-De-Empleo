@@ -3,10 +3,10 @@
   "version": "1.0.0",
   "description": "Backend para Red de Empleo",
   "type": "module",
-  "main": "app.js",
+  "main": "config/app.js",
   "scripts": {
-    "start": "node app.js",
-    "dev": "nodemon app.js"
+    "start": "node config/app.js",
+    "dev": "nodemon config/app.js"
   },
   "author": "Brandon",
   "license": "ISC",

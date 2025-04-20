@@ -1,7 +1,7 @@
 import express from 'express';
+import connection from './db.js';
 import cors from 'cors';
 import 'dotenv/config';
-//import indexRoutes from './controllers/routes/indexRoutes.js'; // Nota el .js
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -12,8 +12,10 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(express.static('public'));
 
-// Rutas
-//app.use('/api', indexRoutes);
+// Ruta básica de prueba
+app.get('/', (req, res) => {
+  res.json({ message: 'Backend funcionando correctamente' });
+});
 
 // Inicio del servidor
 app.listen(PORT, () => {
