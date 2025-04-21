@@ -142,6 +142,9 @@ body{
     text-decoration: underline;
 }
 
+#g_id_onload {
+    padding: 5px;
+}
 
 
 /* Botón genérico */
