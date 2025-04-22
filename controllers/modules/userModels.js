@@ -1,23 +1,17 @@
-import db from '../../config/db.js';
-import bcrypt from 'bcrypt';
+import db from '../../config/db.js'; // Asegúrate que tu archivo se llame db.js, y tenga export default
 
 const UserModel = {
-  findByEmail: (email, callback) => {
-    db.query('SELECT * FROM usuarios WHERE email = ?', [email], callback);
-  },
-  createUser: (nombre, email, password, esEmpresa, callback) => {
-    bcrypt.hash(password, 10, (err, hash) => {
-      if (err) return callback(err);
-      db.query(
-        'INSERT INTO usuarios (nombre, email, password, es_empresa) VALUES (?, ?, ?, ?)',
-        [nombre, email, hash, esEmpresa],
-        callback
-      );
-    });
-  },
-  validatePassword: (password, hash, callback) => {
-    bcrypt.compare(password, hash, callback);
-  }
+    findByEmail: async (email) => {
+        const [rows] = await db.query('SELECT * FROM usuarios WHERE email = ?', [email]);
+        return rows[0];
+    },
+    createUser: async (nombre, email, password, esEmpresa) => {
+        const [result] = await db.query(
+            'INSERT INTO usuarios (nombre, email, password, es_empresa) VALUES (?, ?, ?, ?)',
+            [nombre, email, password, esEmpresa]
+        );
+        return result.insertId;
+    }
 };
 
 export default UserModel;

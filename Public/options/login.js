@@ -1,0 +1,69 @@
+// 💡 URL del backend dinámico (localhost o producción)
+const API_URL =
+  window.location.hostname === 'localhost'
+    ? 'http://localhost:3000' // 🚧 Desarrollo local
+    : 'https://tu-backend-en-railway.app'; // ✅ Producción en Railway (cambia esto)
+
+// Selección de elementos
+const fondo = document.querySelector(".fondo");
+const loginLink = document.querySelector(".login_link");
+const registrarLink = document.querySelector(".register_link");
+
+// Mostrar pantalla de login
+loginLink.addEventListener("click", () => {
+  fondo.classList.remove("active");
+});
+
+// Mostrar pantalla de registro
+registrarLink.addEventListener("click", () => {
+  fondo.classList.add("active");
+});
+
+// Manejo del formulario de login
+const loginForm = document.querySelector(".login form");
+loginForm.addEventListener("submit", (event) => {
+  event.preventDefault();
+
+  const email = loginForm.querySelector("input[type='email']").value;
+  const password = loginForm.querySelector("input[type='password']").value;
+
+  fetch(`${BACKEND_URL}/api/login`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ email, password })
+  })
+    .then(res => res.json())
+    .then(data => {
+      if (data.message === 'Inicio de sesión exitoso') {
+        window.location.href = "views/Inicio_sesion/Home_Sesion";
+      } else {
+        alert(data.message);
+      }
+    })
+    .catch(error => console.error("Error:", error));
+});
+
+// Manejo del formulario de registro
+const registerForm = document.querySelector(".register form");
+registerForm.addEventListener("submit", (event) => {
+  event.preventDefault();
+
+  const nombre = registerForm.querySelector("#nombre").value;
+  const email = registerForm.querySelector("#email_register").value;
+  const password = registerForm.querySelector("#password_register").value;
+  const esEmpresa = registerForm.querySelector("input[type='checkbox']").checked;
+
+  fetch(`${BACKEND_URL}/api/register`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ nombre, email, password, esEmpresa })
+  })
+    .then(res => res.json())
+    .then(data => {
+      alert(data.message);
+      if (data.message === 'Usuario registrado correctamente') {
+        window.location.href = "/login";
+      }
+    })
+    .catch(error => console.error("Error:", error));
+});
