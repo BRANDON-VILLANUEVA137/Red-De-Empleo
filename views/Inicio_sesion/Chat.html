@@ -54,6 +54,7 @@
             <header>
                 <nav>
                     <div class="logo">R.E.T</div>
+                    <button class="hamburger" id="toggleSidebar">☰ Usuarios</button>
                     <ul>
                         <li><a href="Empleos_Sesion.html">Empleos</a></li>
                         <li><a href="Contacto_Sesion.html">Contacto</a></li>
@@ -62,6 +63,7 @@
                     </ul>
                 </nav>
             </header>
+            
             <div class="chat-box" id="chat-box">
                 <div class="mensaje recibido">Hola, ¿cómo estás?</div>
                 <div class="mensaje enviado">¡Hola! Estoy bien, gracias.</div>
@@ -98,6 +100,14 @@
                 }
             });
         });
+
+    // Mostrar/ocultar la sidebar en móviles
+    document.getElementById('toggleSidebar').addEventListener('click', function () {
+        const sidebar = document.querySelector('.sidebar');
+        sidebar.classList.toggle('active');
+    });
+
+
     </script>
 </body>
 </html>
