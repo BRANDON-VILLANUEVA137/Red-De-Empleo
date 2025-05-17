@@ -1,0 +1,40 @@
+<section class="dashboard-cards">
+                    <div class="card">
+                        <button id="btnAddOffer">Agregar Oferta</button>
+                        <table id="offersTable" border="1">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Título</th>
+                                    <th>Descripción</th>
+                                    <th>Empresa ID</th>
+                                    <th>Fecha Publicación</th>
+                                    <th>Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <!-- Ofertas cargadas dinámicamente -->
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="card" id="offerFormSection" style="display:none;">
+                        <h2 id="formTitle">Agregar Oferta</h2>
+                        <form id="offerForm">
+                            <input type="hidden" id="offerId" />
+                            <label for="titulo">Título:</label>
+                            <input type="text" id="titulo" name="titulo" required />
+                            <label for="descripcion">Descripción:</label>
+                            <textarea id="descripcion" name="descripcion" required></textarea>
+                            <label for="empresaId">Empresa ID:</label>
+                            <input type="number" id="empresaId" name="empresaId" required />
+                            <label for="fechaPublicacion">Fecha Publicación:</label>
+                            <input type="date" id="fechaPublicacion" name="fechaPublicacion" required />
+                            <button type="submit">Guardar</button>
+                            <button type="button" id="btnCancel">Cancelar</button>
+                        </form>
+                    </div>
+                </section>
+            </main>
+        </div>
+    </div>
+    <script src="../../Public/admin/admin.js"></script>
