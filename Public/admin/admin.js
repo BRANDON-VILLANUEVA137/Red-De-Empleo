@@ -30,32 +30,80 @@ document.addEventListener('DOMContentLoaded', () => {
             dashboardLink.classList.add('active');
         } else if (sectionToShow === usersSection) {
             usersLink.classList.add('active');
+            fetchUsers();
         } else if (sectionToShow === offersSection) {
             offersLink.classList.add('active');
+            fetchOffers();
         } else if (sectionToShow === reportsSection) {
             reportsLink.classList.add('active');
+            fetchReports();
         } else if (sectionToShow === metricsSection) {
             metricsLink.classList.add('active');
+            fetchMetrics();
         }
     }
 
-    // Datos de ejemplo para usuarios
-    const usersData = [
-        { id: 1, nombre: 'Juan Perez', email: 'juan@example.com', esEmpresa: false },
-        { id: 2, nombre: 'Empresa XYZ', email: 'contacto@xyz.com', esEmpresa: true }
-    ];
+    // Funciones para obtener datos desde el backend con prefijo /api/admin
+    async function fetchUsers() {
+        try {
+            const response = await fetch('/api/admin/users');
+            if (!response.ok) throw new Error('Error al obtener usuarios');
+            const usersData = await response.json();
+            renderUsersTable(usersData);
+        } catch (error) {
+            console.error(error);
+            alert('No se pudieron cargar los usuarios');
+        }
+    }
 
+    async function fetchOffers() {
+        try {
+            const response = await fetch('/api/admin/offers');
+            if (!response.ok) throw new Error('Error al obtener ofertas');
+            const offersData = await response.json();
+            renderOffersTable(offersData);
+        } catch (error) {
+            console.error(error);
+            alert('No se pudieron cargar las ofertas');
+        }
+    }
+
+    async function fetchReports() {
+        try {
+            const response = await fetch('/api/admin/reports');
+            if (!response.ok) throw new Error('Error al obtener reportes');
+            const reportsData = await response.json();
+            renderReportsTable(reportsData);
+        } catch (error) {
+            console.error(error);
+            alert('No se pudieron cargar los reportes');
+        }
+    }
+
+    async function fetchMetrics() {
+        try {
+            const response = await fetch('/api/admin/metrics');
+            if (!response.ok) throw new Error('Error al obtener métricas');
+            const metricsData = await response.json();
+            renderMetricsTable(metricsData);
+        } catch (error) {
+            console.error(error);
+            alert('No se pudieron cargar las métricas');
+        }
+    }
+
+    // Funciones para renderizar tablas con datos reales y mapeo de campos snake_case a camelCase
     const usersTableBody = document.querySelector('#usersTable tbody');
-
-    function renderUsersTable() {
+    function renderUsersTable(usersData) {
         usersTableBody.innerHTML = '';
         usersData.forEach(user => {
+            const esEmpresa = user.es_empresa || user.esEmpresa;
             const tr = document.createElement('tr');
             tr.innerHTML = `
                 <td>${user.id}</td>
                 <td>${user.nombre}</td>
                 <td>${user.email}</td>
-                <td>${user.esEmpresa ? 'Sí' : 'No'}</td>
+                <td>${esEmpresa ? 'Sí' : 'No'}</td>
                 <td>
                     <button class="editUserBtn" data-id="${user.id}">Editar</button>
                     <button class="deleteUserBtn" data-id="${user.id}">Eliminar</button>
@@ -65,7 +113,69 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // Event delegation for edit and delete buttons
+    const offersTableBody = document.querySelector('#offersTable tbody');
+    function renderOffersTable(offersData) {
+        offersTableBody.innerHTML = '';
+        offersData.forEach(offer => {
+            const empresaId = offer.empresa_id || offer.empresaId;
+            const fechaPublicacion = offer.fecha_publicacion || offer.fechaPublicacion;
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+                <td>${offer.id}</td>
+                <td>${offer.titulo}</td>
+                <td>${offer.descripcion}</td>
+                <td>${empresaId}</td>
+                <td>${fechaPublicacion}</td>
+                <td>
+                    <button class="editOfferBtn" data-id="${offer.id}">Editar</button>
+                    <button class="deleteOfferBtn" data-id="${offer.id}">Eliminar</button>
+                </td>
+            `;
+            offersTableBody.appendChild(tr);
+        });
+    }
+
+    const reportsTableBody = document.querySelector('#reportsTable tbody');
+    function renderReportsTable(reportsData) {
+        reportsTableBody.innerHTML = '';
+        reportsData.forEach(report => {
+            const fechaReporte = report.fecha_reporte || report.fechaReporte;
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+                <td>${report.id}</td>
+                <td>${report.titulo}</td>
+                <td>${report.descripcion}</td>
+                <td>${fechaReporte}</td>
+                <td>
+                    <button class="editReportBtn" data-id="${report.id}">Editar</button>
+                    <button class="deleteReportBtn" data-id="${report.id}">Eliminar</button>
+                </td>
+            `;
+            reportsTableBody.appendChild(tr);
+        });
+    }
+
+    const metricsTableBody = document.querySelector('#metricsTable tbody');
+    function renderMetricsTable(metricsData) {
+        metricsTableBody.innerHTML = '';
+        metricsData.forEach(metric => {
+            const fechaMedicion = metric.fecha_medicion || metric.fechaMedicion;
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+                <td>${metric.id}</td>
+                <td>${metric.nombre}</td>
+                <td>${metric.valor}</td>
+                <td>${fechaMedicion}</td>
+                <td>
+                    <button class="editMetricBtn" data-id="${metric.id}">Editar</button>
+                    <button class="deleteMetricBtn" data-id="${metric.id}">Eliminar</button>
+                </td>
+            `;
+            metricsTableBody.appendChild(tr);
+        });
+    }
+
+    // Event delegation para botones editar y eliminar usuarios
     usersTableBody.addEventListener('click', (e) => {
         if (e.target.classList.contains('editUserBtn')) {
             const userId = e.target.getAttribute('data-id');
@@ -76,44 +186,72 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    function editUser(id) {
-        const user = usersData.find(u => u.id == id);
-        if (!user) return;
-        document.getElementById('userId').value = user.id;
-        document.getElementById('nombre').value = user.nombre;
-        document.getElementById('email').value = user.email;
-        document.getElementById('esEmpresa').value = user.esEmpresa ? '1' : '0';
-        document.getElementById('userFormSection').style.display = 'block';
-        showSection(usersSection);
-    }
-
-    function deleteUser(id) {
-        const index = usersData.findIndex(u => u.id == id);
-        if (index === -1) return;
-        if (confirm('¿Estás seguro de eliminar este usuario?')) {
-            usersData.splice(index, 1);
-            renderUsersTable();
+    // Funciones editUser y deleteUser actualizadas para trabajar con datos reales
+    async function editUser(id) {
+        try {
+            const response = await fetch(`/api/admin/users/${id}`);
+            if (!response.ok) throw new Error('Error al obtener usuario');
+            const user = await response.json();
+            document.getElementById('userId').value = user.id;
+            document.getElementById('nombre').value = user.nombre;
+            document.getElementById('email').value = user.email;
+            document.getElementById('esEmpresa').value = user.es_empresa ? '1' : '0';
+            document.getElementById('userFormSection').style.display = 'block';
+            showSection(usersSection);
+        } catch (error) {
+            console.error(error);
+            alert('No se pudo cargar el usuario para editar');
         }
     }
 
-    // Handle user form submit
+    async function deleteUser(id) {
+        if (!confirm('¿Estás seguro de eliminar este usuario?')) return;
+        try {
+            const response = await fetch(`/api/admin/users/${id}`, { method: 'DELETE' });
+            if (!response.ok) throw new Error('Error al eliminar usuario');
+            fetchUsers();
+        } catch (error) {
+            console.error(error);
+            alert('No se pudo eliminar el usuario');
+        }
+    }
+
+    // Manejo del formulario de usuario
     const userForm = document.getElementById('userForm');
-    userForm.addEventListener('submit', (e) => {
+    userForm.addEventListener('submit', async (e) => {
         e.preventDefault();
         const id = parseInt(document.getElementById('userId').value);
         const nombre = document.getElementById('nombre').value;
         const email = document.getElementById('email').value;
         const esEmpresa = document.getElementById('esEmpresa').value === '1';
 
-        const userIndex = usersData.findIndex(u => u.id === id);
-        if (userIndex !== -1) {
-            usersData[userIndex] = { id, nombre, email, esEmpresa };
+        const userData = { nombre, email, esEmpresa };
+
+        try {
+            let response;
+            if (id) {
+                response = await fetch(`/api/admin/users/${id}`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(userData)
+                });
+            } else {
+                response = await fetch('/api/admin/users', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(userData)
+                });
+            }
+            if (!response.ok) throw new Error('Error al guardar usuario');
+            fetchUsers();
+            document.getElementById('userFormSection').style.display = 'none';
+        } catch (error) {
+            console.error(error);
+            alert('No se pudo guardar el usuario');
         }
-        renderUsersTable();
-        document.getElementById('userFormSection').style.display = 'none';
     });
 
-    // Cancel button hides form
+    // Cancelar formulario
     document.getElementById('btnCancel').addEventListener('click', () => {
         document.getElementById('userFormSection').style.display = 'none';
     });
