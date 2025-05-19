@@ -26,7 +26,19 @@ const loginController = {
         id_rol: user.id_rol
       };
 
-      res.status(200).json({ mensaje: 'Login exitoso', usuario: req.session.usuario });
+      // Return user role for frontend redirection
+      let redirectTo = '/Inicio_sesion/Perfil.html';
+      if (user.id_rol === 3) {
+        redirectTo = '/admin/index.html';
+      } else if (user.id_rol === 1) {
+        redirectTo = '/Inicio_sesion/Perfil_Empresa.html';
+      }
+
+      res.status(200).json({ 
+        mensaje: 'Login exitoso', 
+        usuario: req.session.usuario,
+        redirectTo
+      });
     } catch (err) {
       console.error('❌ Error en login:', err);
       res.status(500).json({ mensaje: 'Error en el servidor' });
