@@ -1,8 +1,10 @@
+const domain_railway = "https://red-de-empleo-production.up.railway.app";
+
 // 💡 URL del backend dinámico (localhost o producción)
 const API_URL =
   window.location.hostname === 'localhost'
     ? 'http://localhost:3000' // 🚧 Desarrollo local
-    : 'https://tu-backend-en-railway.app'; // ✅ Producción en Railway (cambia esto)
+    : domain_railway // ✅ Producción en Railway (cambia esto)
 
 // Selección de elementos
 const fondo = document.querySelector(".fondo");
@@ -24,13 +26,13 @@ const loginForm = document.querySelector(".login form");
 loginForm.addEventListener("submit", (event) => {
   event.preventDefault();
 
-  const email = loginForm.querySelector("input[type='email']").value;
-  const password = loginForm.querySelector("input[type='password']").value;
+  const correo = loginForm.querySelector("input[type='email']").value;
+  const contrasena = loginForm.querySelector("input[type='password']").value;
 
-  fetch(`${BACKEND_URL}/api/login`, {
+  fetch(`${API_URL}/api/login`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ email, password })
+    body: JSON.stringify({ correo, contrasena })
   })
     .then(res => res.json())
     .then(data => {
@@ -53,7 +55,7 @@ registerForm.addEventListener("submit", (event) => {
   const password = registerForm.querySelector("#password_register").value;
   const esEmpresa = registerForm.querySelector("input[type='checkbox']").checked;
 
-  fetch(`${BACKEND_URL}/api/register`, {
+  fetch(`${API_URL}/api/register`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ nombre, email, password, esEmpresa })
