@@ -1,42 +1,57 @@
-// loginController.js
+//loginController.js
+
+import bcrypt from 'bcryptjs';
+import UserModel from '../controllers/models/userModels.js';
 
 const loginController = {
-  login: (req, res) => {
-    const { email, password } = req.body;
+  login: async (req, res) => {
+    const { correo, contrasena } = req.body;
+      
+    console.log('Datos recibidos en /api/login:', req.body);
 
-    UserModel.findByEmail(email, (err, results) => {
-      if (err) return res.status(500).json({ message: 'Error del servidor' });
-      if (results.length === 0) return res.status(401).json({ message: 'Correo no registrado' });
 
-      const user = results[0];
-      UserModel.validatePassword(password, user.password, (err, isMatch) => {
-        if (err) return res.status(500).json({ message: 'Error al validar contraseña' });
-        if (!isMatch) return res.status(401).json({ message: 'Contraseña incorrecta' });
-
-        req.session.user = {
-          id: user.id,
-          email: user.email,
-          es_empresa: user.es_empresa
-        };
-
-        res.status(200).json({ message: 'Inicio de sesión exitoso' });
-      });
-    });
-  },
-
-  register: (req, res) => {
-    const { nombre, email, password, esEmpresa } = req.body;
-
-    UserModel.createUser(nombre, email, password, esEmpresa, (err, result) => {
-      if (err) {
-        if (err.code === 'ER_DUP_ENTRY') {
-          return res.status(400).json({ message: 'Correo ya registrado' });
-        }
-        return res.status(500).json({ message: 'Error al registrar usuario' });
+    try {
+      const user = await UserModel.findByEmail(correo);
+      if (!user) {
+        return res.status(401).json({ mensaje: 'Correo no registrado' });
       }
 
-      res.status(201).json({ message: 'Usuario registrado correctamente' });
-    });
+      const isMatch = await bcrypt.compare(contrasena, user.contrasena);
+      if (!isMatch) {
+        return res.status(401).json({ mensaje: 'Contraseña incorrecta' });
+      }
+
+      // Guardar sesión (opcional si usas express-session)
+      req.session.usuario = {
+        id: user.id,
+        correo: user.correo,
+        id_rol: user.id_rol
+      };
+
+      res.status(200).json({ mensaje: 'Login exitoso', usuario: req.session.usuario });
+    } catch (err) {
+      console.error('❌ Error en login:', err);
+      res.status(500).json({ mensaje: 'Error en el servidor' });
+    }
+  },
+
+  register: async (req, res) => {
+    const { nombre, correo, contrasena, id_rol } = req.body;
+
+    try {
+      const existente = await UserModel.findByEmail(correo);
+      if (existente) {
+        return res.status(400).json({ mensaje: 'Correo ya registrado' });
+      }
+
+      const hash = await bcrypt.hash(contrasena, 10);
+      const nuevoId = await UserModel.createUser(nombre, correo, hash, id_rol);
+
+      res.status(201).json({ mensaje: 'Usuario registrado', id: nuevoId });
+    } catch (err) {
+      console.error('❌ Error en registro:', err);
+      res.status(500).json({ mensaje: 'Error en el servidor' });
+    }
   }
 };
 

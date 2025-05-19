@@ -1,3 +1,5 @@
+//Login.js
+
 const domain_railway = "https://red-de-empleo-production.up.railway.app";
 
 // 💡 URL del backend dinámico (localhost o producción)
@@ -34,15 +36,14 @@ loginForm.addEventListener("submit", (event) => {
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ correo, contrasena })
   })
-    .then(res => res.json())
     .then(data => {
-      if (data.message === 'Inicio de sesión exitoso') {
-        window.location.href = "views/Inicio_sesion/Home_Sesion";
-      } else {
-        alert(data.message);
-      }
-    })
-    .catch(error => console.error("Error:", error));
+  if (data.mensaje === 'Login exitoso') {
+    window.location.href = "views/Inicio_sesion/Home_Sesion";
+  } else {
+    alert(data.mensaje);
+  }
+})
+.catch(error => console.error("Error:", error));
 });
 
 // Manejo del formulario de registro
@@ -51,19 +52,19 @@ registerForm.addEventListener("submit", (event) => {
   event.preventDefault();
 
   const nombre = registerForm.querySelector("#nombre").value;
-  const email = registerForm.querySelector("#email_register").value;
-  const password = registerForm.querySelector("#password_register").value;
+  const correo = registerForm.querySelector("#email_register").value;
+  const contrasena = registerForm.querySelector("#password_register").value;
   const esEmpresa = registerForm.querySelector("input[type='checkbox']").checked;
 
   fetch(`${API_URL}/api/register`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ nombre, email, password, esEmpresa })
+    body: JSON.stringify({ nombre, correo, contrasena, id_rol: esEmpresa ? 2 : 1 }) 
   })
     .then(res => res.json())
     .then(data => {
-      alert(data.message);
-      if (data.message === 'Usuario registrado correctamente') {
+      alert(data.mensaje);
+      if (data.mensaje === 'Usuario registrado') {
         window.location.href = "/login";
       }
     })
