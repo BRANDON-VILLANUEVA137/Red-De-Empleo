@@ -3,7 +3,11 @@ import cors from 'cors';
 import dotenv from 'dotenv';
 import loginRoutes from './../controllers/routes/loginRoutes.js'; // Ruta de login/registro
 import adminRoutes from './../controllers/routes/adminRoutes.js'; // Rutas del panel admin
-import connection from './db.js'; // Conexión a la base de datos (db.js)
+import companyRoutes from './../controllers/routes/companyRoutes.js'; // Rutas para empresa
+import userRoutes from './../controllers/routes/userRoutes.js'; // Rutas para usuario normal
+import adminAuthMiddleware from './../controllers/middleware/adminAuth.js';
+import session from 'express-session';
+import bcrypt from 'bcryptjs';
 
 dotenv.config();
 
@@ -12,8 +16,10 @@ const PORT = process.env.PORT || 3000;
 
 // Configuración de CORS (permitir acceso desde Netlify o cualquier frontend que lo necesite)
 const allowedOrigins = [
-  'http://localhost:3000', // Localhost para desarrollo
-  'https://tu-dominio-de-netlify.netlify.app' // Dominio de tu frontend en Netlify
+  'http://localhost:3000',
+  'http://127.0.0.1:5500',// Localhost para desarrollo
+  'https://red-de-empleo-production.up.railway.app', 
+  'https://red-de-empleo.netlify.app' // Dominio de tu frontend en Netlify
 ];
 
 const corsOptions = {
@@ -24,6 +30,7 @@ const corsOptions = {
       callback(new Error('No permitido por CORS'));
     }
   },
+  credentials: true // ← ¡ESTO ES LO MÁS IMPORTANTE!
 };
 
 app.use(cors(corsOptions));
@@ -31,17 +38,23 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(express.static('Public'));
 
-// Middleware básico de autenticación para admin (placeholder)
-const adminAuthMiddleware = (req, res, next) => {
-  // Aquí se debe implementar la lógica real de autenticación y autorización
-  // Por ejemplo, verificar token JWT o sesión y rol de usuario
-  // Por ahora, dejamos pasar todas las peticiones
-  next();
-};
+//Manejo de sesiones
+app.use(session({
+  secret: 'clave_secreta_super_segura',
+  resave: false,
+  saveUninitialized: false,
+  cookie: {
+    secure: true,           // true si usas HTTPS (estás en Railway ✅)
+    sameSite: 'none',       // NECESARIO para que funcione con Netlify (cross-site)
+    maxAge: 1000 * 60 * 60 * 2
+  }
+}));
 
 // Rutas API
 app.use('/api', loginRoutes);
-app.use('/api/admin', adminAuthMiddleware, adminRoutes);
+app.use('/api/admin', adminRoutes);
+app.use('/api/company', companyRoutes);
+app.use('/api/user', userRoutes);
 
 // Ruta de prueba
 app.get('/', (req, res) => {

@@ -1,10 +1,14 @@
 import express from 'express';
-import userController from '../../userController.js';
-import offerController from '../../offerController.js';
-import reportController from '../../reportController.js';
-import metricController from '../../metricController.js';
+import userController from '../userController.js';
+import offerController from '../offerController.js';
+import reportController from '../reportController.js';
+import metricController from '../metricController.js';
+import adminAuthMiddleware from '../middleware/adminAuth.js';
 
 const router = express.Router();
+
+// Apply adminAuthMiddleware to all routes in this router
+// router.use(adminAuthMiddleware);
 
 // Rutas para usuarios
 router.get('/users', userController.getAllUsers);

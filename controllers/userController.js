@@ -20,7 +20,15 @@ const userController = {
     },
     createUser: async (req, res) => {
         try {
-            const { nombre, email, password, esEmpresa } = req.body;
+            const { nombre, email, password, esEmpresa, id_rol } = req.body;
+
+            // Solo administradores pueden crear otros administradores
+            if (id_rol === 3) {
+                if (!req.session.usuario || req.session.usuario.id_rol !== 3) {
+                    return res.status(403).json({ message: 'No autorizado para crear administrador' });
+                }
+            }
+
             const id = await UserModel.createUser(nombre, email, password, esEmpresa);
             res.status(201).json({ message: 'Usuario creado', id });
         } catch (error) {

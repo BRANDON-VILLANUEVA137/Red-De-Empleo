@@ -43,54 +43,74 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
+    // Base URL for backend API
+    const API_BASE_URL = 'https://red-de-empleo-production.up.railway.app/api/admin';
+
     // Funciones para obtener datos desde el backend con prefijo /api/admin
     async function fetchUsers() {
-        try {
-            const response = await fetch('/api/admin/users');
-            if (!response.ok) throw new Error('Error al obtener usuarios');
-            const usersData = await response.json();
-            renderUsersTable(usersData);
-        } catch (error) {
-            console.error(error);
-            alert('No se pudieron cargar los usuarios');
-        }
-    }
+    try {
+        const response = await fetch(`${API_BASE_URL}/users`, {
+            method: 'GET',
+            credentials: 'include' // ✅ Aquí correctamente colocado
+        });
 
-    async function fetchOffers() {
-        try {
-            const response = await fetch('/api/admin/offers');
-            if (!response.ok) throw new Error('Error al obtener ofertas');
-            const offersData = await response.json();
-            renderOffersTable(offersData);
-        } catch (error) {
-            console.error(error);
-            alert('No se pudieron cargar las ofertas');
-        }
+        if (!response.ok) throw new Error('Error al obtener usuarios');
+        const usersData = await response.json();
+        renderUsersTable(usersData);
+        
+    } catch (error) {
+        console.error(error);
+        alert('No se pudieron cargar los usuarios');
     }
+}
 
-    async function fetchReports() {
-        try {
-            const response = await fetch('/api/admin/reports');
-            if (!response.ok) throw new Error('Error al obtener reportes');
-            const reportsData = await response.json();
-            renderReportsTable(reportsData);
-        } catch (error) {
-            console.error(error);
-            alert('No se pudieron cargar los reportes');
-        }
-    }
+   async function fetchOffers() {
+    try {
+        const response = await fetch(`${API_BASE_URL}/offers`, {
+            method: 'GET',
+            credentials: 'include'
+        });
 
-    async function fetchMetrics() {
-        try {
-            const response = await fetch('/api/admin/metrics');
-            if (!response.ok) throw new Error('Error al obtener métricas');
-            const metricsData = await response.json();
-            renderMetricsTable(metricsData);
-        } catch (error) {
-            console.error(error);
-            alert('No se pudieron cargar las métricas');
-        }
+        if (!response.ok) throw new Error('Error al obtener ofertas');
+        const offersData = await response.json();
+        renderOffersTable(offersData);
+    } catch (error) {
+        console.error(error);
+        alert('No se pudieron cargar las ofertas');
     }
+}
+
+async function fetchReports() {
+    try {
+        const response = await fetch(`${API_BASE_URL}/reports`, {
+            method: 'GET',
+            credentials: 'include'
+        });
+
+        if (!response.ok) throw new Error('Error al obtener reportes');
+        const reportsData = await response.json();
+        renderReportsTable(reportsData);
+    } catch (error) {
+        console.error(error);
+        alert('No se pudieron cargar los reportes');
+    }
+}
+
+async function fetchMetrics() {
+    try {
+        const response = await fetch(`${API_BASE_URL}/metrics`, {
+            method: 'GET',
+            credentials: 'include'
+        });
+
+        if (!response.ok) throw new Error('Error al obtener métricas');
+        const metricsData = await response.json();
+        renderMetricsTable(metricsData);
+    } catch (error) {
+        console.error(error);
+        alert('No se pudieron cargar las métricas');
+    }
+}
 
     // Funciones para renderizar tablas con datos reales y mapeo de campos snake_case a camelCase
     const usersTableBody = document.querySelector('#usersTable tbody');
@@ -189,7 +209,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Funciones editUser y deleteUser actualizadas para trabajar con datos reales
     async function editUser(id) {
         try {
-            const response = await fetch(`/api/admin/users/${id}`);
+            const response = await fetch(`${API_BASE_URL}/users/${id}`);
             if (!response.ok) throw new Error('Error al obtener usuario');
             const user = await response.json();
             document.getElementById('userId').value = user.id;
@@ -207,7 +227,7 @@ document.addEventListener('DOMContentLoaded', () => {
     async function deleteUser(id) {
         if (!confirm('¿Estás seguro de eliminar este usuario?')) return;
         try {
-            const response = await fetch(`/api/admin/users/${id}`, { method: 'DELETE' });
+            const response = await fetch(`${API_BASE_URL}/users/${id}`, { method: 'DELETE' });
             if (!response.ok) throw new Error('Error al eliminar usuario');
             fetchUsers();
         } catch (error) {
@@ -230,13 +250,13 @@ document.addEventListener('DOMContentLoaded', () => {
         try {
             let response;
             if (id) {
-                response = await fetch(`/api/admin/users/${id}`, {
+                response = await fetch(`${API_BASE_URL}/users/${id}`, {
                     method: 'PUT',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(userData)
                 });
             } else {
-                response = await fetch('/api/admin/users', {
+                response = await fetch(`${API_BASE_URL}/users`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(userData)

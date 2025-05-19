@@ -10,6 +10,10 @@ CREATE TABLE roles (
     id INT AUTO_INCREMENT PRIMARY KEY,
     nombre VARCHAR(50) NOT NULL UNIQUE
 );
+use red_empleo; 
+INSERT INTO `red_empleo`.`roles` (`id`, `nombre`) VALUES ('1', 'Usuario_Empresa');
+INSERT INTO `red_empleo`.`roles` (`id`, `nombre`) VALUES ('2', 'Usuario_Normal');
+INSERT INTO `red_empleo`.`roles` (`id`, `nombre`) VALUES ('3', 'admin');
 
 -- Tabla de usuarios (trabajadores, empleadores, administradores)
 CREATE TABLE usuarios (
