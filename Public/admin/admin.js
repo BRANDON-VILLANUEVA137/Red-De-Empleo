@@ -48,52 +48,69 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Funciones para obtener datos desde el backend con prefijo /api/admin
     async function fetchUsers() {
-        try {
-            const response = await fetch(`${API_BASE_URL}/users`);
-            if (!response.ok) throw new Error('Error al obtener usuarios');
-            const usersData = await response.json();
-            renderUsersTable(usersData);
-        } catch (error) {
-            console.error(error);
-            alert('No se pudieron cargar los usuarios');
-        }
-    }
+    try {
+        const response = await fetch(`${API_BASE_URL}/users`, {
+            method: 'GET',
+            credentials: 'include' // ✅ Aquí correctamente colocado
+        });
 
-    async function fetchOffers() {
-        try {
-            const response = await fetch(`${API_BASE_URL}/offers`);
-            if (!response.ok) throw new Error('Error al obtener ofertas');
-            const offersData = await response.json();
-            renderOffersTable(offersData);
-        } catch (error) {
-            console.error(error);
-            alert('No se pudieron cargar las ofertas');
-        }
+        if (!response.ok) throw new Error('Error al obtener usuarios');
+        const usersData = await response.json();
+        renderUsersTable(usersData);
+        
+    } catch (error) {
+        console.error(error);
+        alert('No se pudieron cargar los usuarios');
     }
+}
 
-    async function fetchReports() {
-        try {
-            const response = await fetch(`${API_BASE_URL}/reports`);
-            if (!response.ok) throw new Error('Error al obtener reportes');
-            const reportsData = await response.json();
-            renderReportsTable(reportsData);
-        } catch (error) {
-            console.error(error);
-            alert('No se pudieron cargar los reportes');
-        }
-    }
+   async function fetchOffers() {
+    try {
+        const response = await fetch(`${API_BASE_URL}/offers`, {
+            method: 'GET',
+            credentials: 'include'
+        });
 
-    async function fetchMetrics() {
-        try {
-            const response = await fetch(`${API_BASE_URL}/metrics`);
-            if (!response.ok) throw new Error('Error al obtener métricas');
-            const metricsData = await response.json();
-            renderMetricsTable(metricsData);
-        } catch (error) {
-            console.error(error);
-            alert('No se pudieron cargar las métricas');
-        }
+        if (!response.ok) throw new Error('Error al obtener ofertas');
+        const offersData = await response.json();
+        renderOffersTable(offersData);
+    } catch (error) {
+        console.error(error);
+        alert('No se pudieron cargar las ofertas');
     }
+}
+
+async function fetchReports() {
+    try {
+        const response = await fetch(`${API_BASE_URL}/reports`, {
+            method: 'GET',
+            credentials: 'include'
+        });
+
+        if (!response.ok) throw new Error('Error al obtener reportes');
+        const reportsData = await response.json();
+        renderReportsTable(reportsData);
+    } catch (error) {
+        console.error(error);
+        alert('No se pudieron cargar los reportes');
+    }
+}
+
+async function fetchMetrics() {
+    try {
+        const response = await fetch(`${API_BASE_URL}/metrics`, {
+            method: 'GET',
+            credentials: 'include'
+        });
+
+        if (!response.ok) throw new Error('Error al obtener métricas');
+        const metricsData = await response.json();
+        renderMetricsTable(metricsData);
+    } catch (error) {
+        console.error(error);
+        alert('No se pudieron cargar las métricas');
+    }
+}
 
     // Funciones para renderizar tablas con datos reales y mapeo de campos snake_case a camelCase
     const usersTableBody = document.querySelector('#usersTable tbody');
