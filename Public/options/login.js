@@ -40,7 +40,7 @@ loginForm.addEventListener("submit", (event) => {
     .then(res => res.json())
     .then(data => {
       if (data.mensaje === 'Login exitoso') {
-        window.location.href = "views/Inicio_sesion/Home_Sesion";
+        window.location.href = "/Inicio_sesion/Home_Sesion";
       } else {
         alert(data.mensaje);
       }
