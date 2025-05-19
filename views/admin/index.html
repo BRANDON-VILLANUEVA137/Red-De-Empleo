@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Panel Admin - Inicio</title>
+    <link rel="stylesheet" href="../../Public/styles/admin.css" />
+</head>
+<body>
+    <div class="admin-container">
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <h2>Admin</h2>
+            </div>
+            <nav class="sidebar-nav">
+                <ul>
+                    <li><a href="#" id="dashboardLink" class="active">Dashboard</a></li>
+                    <li><a href="#" id="usersLink">Usuarios</a></li>
+                    <li><a href="#" id="offersLink">Ofertas</a></li>
+                    <li><a href="#" id="reportsLink">Reportes</a></li>
+                    <li><a href="#" id="metricsLink">Métricas</a></li>
+                </ul>
+            </nav>
+        </aside>
+        <div class="main-content">
+            <header class="main-header">
+                <h1>Panel de Administración</h1>
+                <div class="user-info">
+                    <span>Hola, Admin</span>
+                </div>
+            </header>
+            <main>
+                <section class="dashboard-cards" id="dashboardSection">
+                    <div class="card">
+                        <h2>Información General</h2>
+                        <p>Bienvenido al panel de administración. Aquí puedes gestionar usuarios, ofertas, reportes y métricas.</p>
+                        <ul>
+                            <li>Total de usuarios registrados: <strong>--</strong></li>
+                            <li>Total de ofertas publicadas: <strong>--</strong></li>
+                            <li>Total de reportes generados: <strong>--</strong></li>
+                            <li>Total de métricas registradas: <strong>--</strong></li>
+                        </ul>
+                    </div>
+                    <div class="card">
+                        <h2>Guía de Uso</h2>
+                        <ol>
+                            <li>Utiliza el menú lateral para navegar entre las secciones.</li>
+                            <li>En cada sección puedes agregar, editar o eliminar registros.</li>
+                            <li>Para agregar un nuevo registro, haz clic en el botón "Agregar".</li>
+                            <li>Para editar o eliminar, utiliza los botones correspondientes en cada fila de la tabla.</li>
+                            <li>Recuerda guardar los cambios antes de salir de cada formulario.</li>
+                        </ol>
+                    </div>
+                </section>
+                <section class="dashboard-cards" id="usersSection" style="display:none;">
+                    <div class="card">
+                        <!-- Botón "Agregar Usuario" eliminado según solicitud -->
+                        <table id="usersTable" border="1">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Nombre</th>
+                                    <th>Email</th>
+                                    <th>Es Empresa</th>
+                                    <th>Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <!-- Usuarios cargados dinámicamente con botones Editar y Eliminar -->
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="card" id="userFormSection" style="display:none;">
+                        <h2 id="formTitle">Editar Usuario</h2>
+                        <form id="userForm">
+                            <input type="hidden" id="userId" />
+                            <label for="nombre">Nombre:</label>
+                            <input type="text" id="nombre" name="nombre" required />
+                            <label for="email">Email:</label>
+                            <input type="email" id="email" name="email" required />
+                            <label for="esEmpresa">Es Empresa:</label>
+                            <select id="esEmpresa" name="esEmpresa" required>
+                                <option value="0">No</option>
+                                <option value="1">Sí</option>
+                            </select>
+                            <button type="submit">Guardar</button>
+                            <button type="button" id="btnCancel">Cancelar</button>
+                        </form>
+                    </div>
+                </section>
+                <section class="dashboard-cards" id="offersSection" style="display:none;">
+                    <div class="card">
+                        <!-- Botón "Agregar Oferta" eliminado según solicitud -->
+                        <table id="offersTable" border="1">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Título</th>
+                                    <th>Descripción</th>
+                                    <th>Empresa ID</th>
+                                    <th>Fecha Publicación</th>
+                                    <th>Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <!-- Ofertas cargadas dinámicamente con botones Editar y Eliminar -->
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="card" id="offerFormSection" style="display:none;">
+                        <h2 id="formTitle">Editar Oferta</h2>
+                        <form id="offerForm">
+                            <input type="hidden" id="offerId" />
+                            <label for="titulo">Título:</label>
+                            <input type="text" id="titulo" name="titulo" required />
+                            <label for="descripcion">Descripción:</label>
+                            <textarea id="descripcion" name="descripcion" required></textarea>
+                            <label for="empresaId">Empresa ID:</label>
+                            <input type="number" id="empresaId" name="empresaId" required />
+                            <label for="fechaPublicacion">Fecha Publicación:</label>
+                            <input type="date" id="fechaPublicacion" name="fechaPublicacion" required />
+                            <button type="submit">Guardar</button>
+                            <button type="button" id="btnCancel">Cancelar</button>
+                        </form>
+                    </div>
+                </section>
+                <section class="dashboard-cards" id="reportsSection" style="display:none;">
+                    <div class="card">
+                        <!-- Botón "Agregar Reporte" eliminado según solicitud -->
+                        <table id="reportsTable" border="1">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Título</th>
+                                    <th>Descripción</th>
+                                    <th>Fecha Reporte</th>
+                                    <th>Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <!-- Reportes cargados dinámicamente con botones Editar y Eliminar -->
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="card" id="reportFormSection" style="display:none;">
+                        <h2 id="formTitle">Editar Reporte</h2>
+                        <form id="reportForm">
+                            <input type="hidden" id="reportId" />
+                            <label for="titulo">Título:</label>
+                            <input type="text" id="titulo" name="titulo" required />
+                            <label for="descripcion">Descripción:</label>
+                            <textarea id="descripcion" name="descripcion" required></textarea>
+                            <label for="fechaReporte">Fecha Reporte:</label>
+                            <input type="date" id="fechaReporte" name="fechaReporte" required />
+                            <button type="submit">Guardar</button>
+                            <button type="button" id="btnCancel">Cancelar</button>
+                        </form>
+                    </div>
+                </section>
+                <section class="dashboard-cards" id="metricsSection" style="display:none;">
+                    <div class="card">
+                        <!-- Botón "Agregar Métrica" eliminado según solicitud -->
+                        <table id="metricsTable" border="1">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Nombre</th>
+                                    <th>Valor</th>
+                                    <th>Fecha Medición</th>
+                                    <th>Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <!-- Métricas cargadas dinámicamente con botones Editar y Eliminar -->
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="card" id="metricFormSection" style="display:none;">
+                        <h2 id="formTitle">Editar Métrica</h2>
+                        <form id="metricForm">
+                            <input type="hidden" id="metricId" />
+                            <label for="nombre">Nombre:</label>
+                            <input type="text" id="nombre" name="nombre" required />
+                            <label for="valor">Valor:</label>
+                            <input type="number" id="valor" name="valor" step="any" required />
+                            <label for="fechaMedicion">Fecha Medición:</label>
+                            <input type="date" id="fechaMedicion" name="fechaMedicion" required />
+                            <button type="submit">Guardar</button>
+                            <button type="button" id="btnCancel">Cancelar</button>
+                        </form>
+                    </div>
+                </section>
+            </main>
+        </div>
+    </div>
+    <script src="../../Public/admin/admin.js"></script>
+</body>
+</html>
