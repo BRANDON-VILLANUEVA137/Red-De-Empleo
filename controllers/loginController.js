@@ -1,7 +1,5 @@
-//loginController.js
-
 import bcrypt from 'bcryptjs';
-import UserModel from '../models/userModels.js';
+import UserModel from '../models/authUserModel.js';
 
 const loginController = {
   login: async (req, res) => {
@@ -9,10 +7,9 @@ const loginController = {
       
     console.log('Datos recibidos en /api/login:', req.body);
 
-
     try {
       const user = await UserModel.findByEmail(correo);
-      console.log('Usuario encontrado:', user); // <-- Agregado
+      console.log('Usuario encontrado:', user);
 
       if (!user) {
         return res.status(401).json({ mensaje: 'Correo no registrado' });
@@ -23,7 +20,6 @@ const loginController = {
         return res.status(401).json({ mensaje: 'Contraseña incorrecta' });
       }
 
-      // Guardar sesión (opcional si usas express-session)
       req.session.usuario = {
         id: user.id,
         correo: user.correo,

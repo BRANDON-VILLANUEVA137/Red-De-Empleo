@@ -1,8 +1,8 @@
 import express from 'express';
-import userController from '../../userController.js';
-import offerController from '../../offerController.js';
-import reportController from '../../reportController.js';
-import metricController from '../../metricController.js';
+import userController from '../userController.js';
+import offerController from '../offerController.js';
+import reportController from '../reportController.js';
+import metricController from '../metricController.js';
 
 const router = express.Router();
 

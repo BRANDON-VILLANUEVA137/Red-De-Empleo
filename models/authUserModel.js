@@ -1,4 +1,4 @@
-//userModels.js
+// authUserModel.js
 import db from '../config/db.js';
 
 const UserModel = {

@@ -1,14 +1,11 @@
-//app.js
-
 import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
 import loginRoutes from './../controllers/routes/loginRoutes.js'; // Ruta de login/registro
 import adminRoutes from './../controllers/routes/adminRoutes.js'; // Rutas del panel admin
-import connection from './db.js'; // Conexión a la base de datos (db.js)
+import adminAuthMiddleware from './../controllers/middleware/adminAuth.js';
 import session from 'express-session';
 import bcrypt from 'bcryptjs';
-
 
 dotenv.config();
 
@@ -31,22 +28,13 @@ const corsOptions = {
       callback(new Error('No permitido por CORS'));
     }
   },
-    credentials: true // ← ¡ESTO ES LO MÁS IMPORTANTE!
-
+  credentials: true // ← ¡ESTO ES LO MÁS IMPORTANTE!
 };
 
 app.use(cors(corsOptions));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(express.static('Public'));
-
-// Middleware básico de autenticación para admin (placeholder)
-const adminAuthMiddleware = (req, res, next) => {
-  // Aquí se debe implementar la lógica real de autenticación y autorización
-  // Por ejemplo, verificar token JWT o sesión y rol de usuario
-  // Por ahora, dejamos pasar todas las peticiones
-  next();
-};
 
 //Manejo de sesiones
 app.use(session({
@@ -58,7 +46,6 @@ app.use(session({
     maxAge: 1000 * 60 * 60 * 2 // 2 horas
   }
 }));
-
 
 // Rutas API
 app.use('/api', loginRoutes);
