@@ -33,6 +33,7 @@ loginForm.addEventListener("submit", (event) => {
 
   fetch(`${API_URL}/api/login`, {
     method: 'POST',
+    credentials: 'include', // ← importante para sesiones
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ correo, contrasena })
   })
