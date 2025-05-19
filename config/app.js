@@ -30,6 +30,8 @@ const corsOptions = {
       callback(new Error('No permitido por CORS'));
     }
   },
+    credentials: true // ← ¡ESTO ES LO MÁS IMPORTANTE!
+
 };
 
 app.use(cors(corsOptions));
