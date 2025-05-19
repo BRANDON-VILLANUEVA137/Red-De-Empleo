@@ -1,8 +1,13 @@
+//app.js
+
 import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
 import loginRoutes from './../controllers/routes/loginRoutes.js'; // Ruta de login/registro
 import connection from './db.js'; // Conexión a la base de datos (db.js)
+import session from 'express-session';
+import bcrypt from 'bcryptjs';
+
 
 dotenv.config();
 
@@ -11,8 +16,9 @@ const PORT = process.env.PORT || 3000;
 
 // Configuración de CORS (permitir acceso desde Netlify o cualquier frontend que lo necesite)
 const allowedOrigins = [
-  'http://localhost:3000', // Localhost para desarrollo
-  'https://tu-dominio-de-netlify.netlify.app' // Dominio de tu frontend en Netlify
+  'http://localhost:3000',
+  'https://red-de-empleo-production.up.railway.app/', // Localhost para desarrollo
+  'https://red-de-empleo.netlify.app/' // Dominio de tu frontend en Netlify
 ];
 
 const corsOptions = {
@@ -29,6 +35,18 @@ app.use(cors(corsOptions));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(express.static('public'));
+
+//Manejo de sesiones
+app.use(session({
+  secret: 'clave_secreta_super_segura',
+  resave: false,
+  saveUninitialized: false,
+  cookie: {
+    secure: false, // Ponlo en true si usas HTTPS (Railway + Netlify)
+    maxAge: 1000 * 60 * 60 * 2 // 2 horas
+  }
+}));
+
 
 // Rutas API
 app.use('/api', loginRoutes);
