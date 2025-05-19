@@ -52,7 +52,7 @@ app.use(session({
 
 // Rutas API
 app.use('/api', loginRoutes);
-app.use('/api/admin', adminAuthMiddleware, adminRoutes);
+app.use('/api/admin', adminRoutes);
 app.use('/api/company', companyRoutes);
 app.use('/api/user', userRoutes);
 
