@@ -27,11 +27,11 @@ const loginController = {
       };
 
       // Return user role for frontend redirection
-      let redirectTo = '/Inicio_sesion/Perfil.html';
+      let redirectTo = '/views/Inicio_sesion/Perfil.html';
       if (user.id_rol === 3) {
-        redirectTo = '/admin/index.html';
+        redirectTo = '/views/admin/index.html';
       } else if (user.id_rol === 1) {
-        redirectTo = '/Inicio_sesion/Perfil_Empresa.html';
+        redirectTo = '/views/Inicio_sesion/Perfil_Empresa.html';
       }
 
       res.status(200).json({ 
