@@ -1,13 +1,11 @@
-//app.js
-
 import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
 import loginRoutes from './../controllers/routes/loginRoutes.js'; // Ruta de login/registro
-import connection from './db.js'; // Conexión a la base de datos (db.js)
+import adminRoutes from './../controllers/routes/adminRoutes.js'; // Rutas del panel admin
+import adminAuthMiddleware from './../controllers/middleware/adminAuth.js';
 import session from 'express-session';
 import bcrypt from 'bcryptjs';
-
 
 dotenv.config();
 
@@ -30,14 +28,13 @@ const corsOptions = {
       callback(new Error('No permitido por CORS'));
     }
   },
-    credentials: true // ← ¡ESTO ES LO MÁS IMPORTANTE!
-
+  credentials: true // ← ¡ESTO ES LO MÁS IMPORTANTE!
 };
 
 app.use(cors(corsOptions));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
-app.use(express.static('public'));
+app.use(express.static('Public'));
 
 //Manejo de sesiones
 app.use(session({
@@ -50,9 +47,9 @@ app.use(session({
   }
 }));
 
-
 // Rutas API
 app.use('/api', loginRoutes);
+app.use('/api/admin', adminAuthMiddleware, adminRoutes);
 
 // Ruta de prueba
 app.get('/', (req, res) => {
