@@ -44,7 +44,7 @@ app.use(session({
   resave: false,
   saveUninitialized: false,
   cookie: {
-    secure: false, // Ponlo en true si usas HTTPS (Railway + Netlify)
+    secure: true, // Ponlo en true si usas HTTPS (Railway + Netlify)
     maxAge: 1000 * 60 * 60 * 2 // 2 horas
   }
 }));
