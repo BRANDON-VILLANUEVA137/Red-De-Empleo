@@ -17,8 +17,8 @@ const PORT = process.env.PORT || 3000;
 // Configuración de CORS (permitir acceso desde Netlify o cualquier frontend que lo necesite)
 const allowedOrigins = [
   'http://localhost:3000',
-  'http://127.0.0.1:5500',
-  'https://red-de-empleo-production.up.railway.app', // Localhost para desarrollo
+  'http://127.0.0.1:5500',// Localhost para desarrollo
+  'https://red-de-empleo-production.up.railway.app', 
   'https://red-de-empleo.netlify.app' // Dominio de tu frontend en Netlify
 ];
 
