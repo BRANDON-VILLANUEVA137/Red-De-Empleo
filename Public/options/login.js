@@ -37,14 +37,15 @@ loginForm.addEventListener("submit", (event) => {
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ correo, contrasena })
   })
+    .then(res => res.json())
     .then(data => {
-  if (data.mensaje === 'Login exitoso') {
-    window.location.href = "views/Inicio_sesion/Home_Sesion";
-  } else {
-    alert(data.mensaje);
-  }
-})
-.catch(error => console.error("Error:", error));
+      if (data.mensaje === 'Login exitoso') {
+        window.location.href = "views/Inicio_sesion/Home_Sesion";
+      } else {
+        alert(data.mensaje);
+      }
+    })
+    .catch(error => console.error("Error:", error));
 });
 
 // Manejo del formulario de registro
