@@ -12,6 +12,8 @@ const loginController = {
 
     try {
       const user = await UserModel.findByEmail(correo);
+      console.log('Usuario encontrado:', user); // <-- Agregado
+
       if (!user) {
         return res.status(401).json({ mensaje: 'Correo no registrado' });
       }
