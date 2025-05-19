@@ -19,6 +19,7 @@
                     <li><a href="#" id="offersLink">Ofertas</a></li>
                     <li><a href="#" id="reportsLink">Reportes</a></li>
                     <li><a href="#" id="metricsLink">Métricas</a></li>
+                    <li><a href="#" id="administradoresLink">Administradores</a></li>
                 </ul>
             </nav>
         </aside>
@@ -85,6 +86,35 @@
                             </select>
                             <button type="submit">Guardar</button>
                             <button type="button" id="btnCancel">Cancelar</button>
+                        </form>
+                    </div>
+                </section>
+                <section class="dashboard-cards" id="administradoresSection" style="display:none;">
+                    <div class="card">
+                        <button id="btnAddAdministrador">Agregar Administrador</button>
+                        <table id="administradoresTable" border="1">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Nombre</th>
+                                    <th>Email</th>
+                                    <th>Permisos</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <!-- Administradores cargados dinámicamente -->
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="card" id="administradorFormSection" style="display:none;">
+                        <h2>Agregar Administrador</h2>
+                        <form id="administradorForm">
+                            <label for="id_usuario">ID Usuario:</label>
+                            <input type="number" id="id_usuario" name="id_usuario" required />
+                            <label for="permisos">Permisos:</label>
+                            <textarea id="permisos" name="permisos"></textarea>
+                            <button type="submit">Guardar</button>
+                            <button type="button" id="btnCancelAdministrador">Cancelar</button>
                         </form>
                     </div>
                 </section>

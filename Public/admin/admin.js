@@ -289,6 +289,84 @@ async function fetchMetrics() {
         showSection(dashboardSection);
     });
 
+    // Administradores section elements
+    const administradoresLink = document.getElementById('administradoresLink');
+    const administradoresSection = document.getElementById('administradoresSection');
+    const administradoresTableBody = document.querySelector('#administradoresTable tbody');
+    const btnAddAdministrador = document.getElementById('btnAddAdministrador');
+    const administradorFormSection = document.getElementById('administradorFormSection');
+    const administradorForm = document.getElementById('administradorForm');
+    const btnCancelAdministrador = document.getElementById('btnCancelAdministrador');
+
+    administradoresLink.addEventListener('click', (e) => {
+        e.preventDefault();
+        showSection(administradoresSection);
+        fetchAdministradores();
+    });
+
+    btnAddAdministrador.addEventListener('click', () => {
+        administradorFormSection.style.display = 'block';
+        btnAddAdministrador.style.display = 'none';
+    });
+
+    btnCancelAdministrador.addEventListener('click', () => {
+        administradorFormSection.style.display = 'none';
+        btnAddAdministrador.style.display = 'block';
+        administradorForm.reset();
+    });
+
+    async function fetchAdministradores() {
+        try {
+            const response = await fetch(`${API_BASE_URL}/administradores`, {
+                method: 'GET',
+                credentials: 'include'
+            });
+            if (!response.ok) throw new Error('Error al obtener administradores');
+            const administradoresData = await response.json();
+            renderAdministradoresTable(administradoresData);
+        } catch (error) {
+            console.error(error);
+            alert('No se pudieron cargar los administradores');
+        }
+    }
+
+    function renderAdministradoresTable(administradoresData) {
+        administradoresTableBody.innerHTML = '';
+        administradoresData.forEach(admin => {
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+                <td>${admin.id}</td>
+                <td>${admin.nombre}</td>
+                <td>${admin.correo}</td>
+                <td>${admin.permisos || ''}</td>
+            `;
+            administradoresTableBody.appendChild(tr);
+        });
+    }
+
+    administradorForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const id_usuario = parseInt(document.getElementById('id_usuario').value);
+        const permisos = document.getElementById('permisos').value;
+
+        try {
+            const response = await fetch(`${API_BASE_URL}/administradores`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                credentials: 'include',
+                body: JSON.stringify({ id_usuario, permisos })
+            });
+            if (!response.ok) throw new Error('Error al agregar administrador');
+            administradorFormSection.style.display = 'none';
+            btnAddAdministrador.style.display = 'block';
+            administradorForm.reset();
+            fetchAdministradores();
+        } catch (error) {
+            console.error(error);
+            alert('No se pudo agregar el administrador');
+        }
+    });
+
     usersLink.addEventListener('click', (e) => {
         e.preventDefault();
         showSection(usersSection);
