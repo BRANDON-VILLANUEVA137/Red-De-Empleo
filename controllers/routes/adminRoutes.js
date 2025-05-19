@@ -8,7 +8,7 @@ import adminAuthMiddleware from '../middleware/adminAuth.js';
 const router = express.Router();
 
 // Apply adminAuthMiddleware to all routes in this router
-router.use(adminAuthMiddleware);
+// router.use(adminAuthMiddleware);
 
 // Rutas para usuarios
 router.get('/users', userController.getAllUsers);
