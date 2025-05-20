@@ -20,7 +20,7 @@ const userController = {
     },
     createUser: async (req, res) => {
         try {
-            const { nombre, correo, contrasena, id_rol } = req.body;
+            const { nombre, email, password, esEmpresa, id_rol } = req.body;
 
             // Solo administradores pueden crear otros administradores
             if (id_rol === 3) {
@@ -29,7 +29,7 @@ const userController = {
                 }
             }
 
-            const id = await UserModel.createUser(nombre, correo, contrasena, id_rol);
+            const id = await UserModel.createUser(nombre, email, password, esEmpresa);
             res.status(201).json({ message: 'Usuario creado', id });
         } catch (error) {
             res.status(500).json({ message: 'Error al crear usuario' });
@@ -37,8 +37,8 @@ const userController = {
     },
     updateUser: async (req, res) => {
         try {
-            const { nombre, correo, id_rol } = req.body;
-            const affectedRows = await UserModel.updateUser(req.params.id, nombre, correo, id_rol);
+            const { nombre, email, esEmpresa } = req.body;
+            const affectedRows = await UserModel.updateUser(req.params.id, nombre, email, esEmpresa);
             if (affectedRows === 0) return res.status(404).json({ message: 'Usuario no encontrado' });
             res.json({ message: 'Usuario actualizado' });
         } catch (error) {

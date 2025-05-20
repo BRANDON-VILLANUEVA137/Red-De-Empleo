@@ -117,14 +117,12 @@ async function fetchMetrics() {
     function renderUsersTable(usersData) {
         usersTableBody.innerHTML = '';
         usersData.forEach(user => {
-            const esEmpresa = user.es_empresa || user.esEmpresa || false;
-            const rol = user.id_rol || user.rol || 'N/A';
+            const esEmpresa = user.es_empresa || user.esEmpresa;
             const tr = document.createElement('tr');
             tr.innerHTML = `
                 <td>${user.id}</td>
                 <td>${user.nombre}</td>
-                <td>${user.correo || user.email || ''}</td>
-                <td>${rol}</td>
+                <td>${user.email}</td>
                 <td>${esEmpresa ? 'Sí' : 'No'}</td>
                 <td>
                     <button class="editUserBtn" data-id="${user.id}">Editar</button>
@@ -216,8 +214,7 @@ async function fetchMetrics() {
             const user = await response.json();
             document.getElementById('userId').value = user.id;
             document.getElementById('nombre').value = user.nombre;
-            document.getElementById('correo').value = user.correo || '';
-            document.getElementById('id_rol').value = user.id_rol || '';
+            document.getElementById('email').value = user.email;
             document.getElementById('esEmpresa').value = user.es_empresa ? '1' : '0';
             document.getElementById('userFormSection').style.display = 'block';
             showSection(usersSection);
@@ -245,11 +242,10 @@ async function fetchMetrics() {
         e.preventDefault();
         const id = parseInt(document.getElementById('userId').value);
         const nombre = document.getElementById('nombre').value;
-        const correo = document.getElementById('correo').value;
-        const id_rol = parseInt(document.getElementById('id_rol').value);
+        const email = document.getElementById('email').value;
         const esEmpresa = document.getElementById('esEmpresa').value === '1';
 
-        const userData = { nombre, correo, id_rol, esEmpresa };
+        const userData = { nombre, email, esEmpresa };
 
         try {
             let response;
