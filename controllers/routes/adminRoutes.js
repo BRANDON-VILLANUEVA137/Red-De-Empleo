@@ -4,13 +4,10 @@ import offerController from '../offerController.js';
 import reportController from '../reportController.js';
 import metricController from '../metricController.js';
 import { getAllAdministradores, addAdministrador } from '../modules/adminModels.js';
-import { protegerRutaAPI, soloAdmin } from '../../middlewares/authMiddleware.js';
 
 
 const router = express.Router();
 
-// ✅ Middleware global para todas las rutas de admin:
-router.use(protegerRutaAPI, soloAdmin);
 
 // Rutas para usuarios
 router.get('/users', userController.getAllUsers);

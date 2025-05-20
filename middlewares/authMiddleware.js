@@ -1,4 +1,4 @@
-// middlewares/authMiddleware.js
+/* middlewares/authMiddleware.js
 
 // ✅ Protege rutas de API
 export function protegerRutaAPI(req, res, next) {
@@ -26,3 +26,4 @@ export function soloAdmin(req, res, next) {
     res.status(403).json({ mensaje: 'Acceso denegado. Solo administradores.' });
   }
 }
+*/
