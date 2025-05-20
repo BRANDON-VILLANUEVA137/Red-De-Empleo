@@ -9,8 +9,6 @@ import companyRoutes from './../controllers/routes/companyRoutes.js'; // Rutas p
 import userRoutes from './../controllers/routes/userRoutes.js'; // Rutas para usuario normal
 import session from 'express-session';
 import bcrypt from 'bcryptjs';
-import { protegerRutaAPI, soloAdmin } from '../middlewares/authMiddleware.js';
-import { protegerVista } from '../middlewares/authMiddleware.js';
 
 
 dotenv.config();
@@ -55,9 +53,6 @@ app.use(session({
 }));
 
 
-app.get('/views/admin/index.html', protegerVista, (req, res) => {
-  res.sendFile('index.html', { root: 'Public/views/admin' }); // Ajusta si está en otra carpeta
-});
 
 
 // Rutas API
