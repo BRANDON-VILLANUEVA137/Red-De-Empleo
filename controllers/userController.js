@@ -4,7 +4,14 @@ const userController = {
     getAllUsers: async (req, res) => {
         try {
             const users = await UserModel.getAllUsers();
-            res.json(users);
+            // Map id_rol to tipoCuenta string
+            const usersWithTipoCuenta = users.map(user => {
+                let tipoCuenta = 'Usuario';
+                if (user.id_rol === 1) tipoCuenta = 'Empresa';
+                else if (user.id_rol === 3) tipoCuenta = 'Admin';
+                return { ...user, tipoCuenta };
+            });
+            res.json(usersWithTipoCuenta);
         } catch (error) {
             res.status(500).json({ message: 'Error al obtener usuarios' });
         }
