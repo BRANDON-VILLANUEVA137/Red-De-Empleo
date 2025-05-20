@@ -4,11 +4,41 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Chat - Red de Empleo</title>
-    <link rel="stylesheet" href="/Public/styles/Chat.css">
-    <link rel="stylesheet" href="/Public/styles/principal.css">
+    <link rel="stylesheet" href="/styles/Chat.css">
+    <link rel="stylesheet" href="/styles/principal.css">
+    
+    <script type="module">
+        import { io } from 'https://cdn.socket.io/4.8.1/socket.io.esm.min.js'
+        
+         const socket = io('http://localhost:3000');
+
+         const form = document.getElementById('form')
+         const input = document.getElementById('mensaje')
+         const mensajes = document.getElementById('mensajes')
+
+         socket.on('chat mensaje', (msg) =>{
+            const item = `<div class="mensaje recibido">${msg}</div>`;
+            mensajes.insertAdjacentHTML('beforeend', item)
+         })
+        
+         //Enviar mensaje
+         form.addEventListener('submit', (e)=>{
+            e.preventDefault()
+
+            if(input.value){
+                socket.emit('chat mensaje', input.value)
+                input.value = ''
+            }
+
+         })
+
+
+
+    </script>
+  
 </head>
 <body>
-    <div class="chat-container">
+    <div class="chat-container"> 
         <div class="sidebar">
             <h3>Usuarios</h3>
             <input type="text" id="searchUser" placeholder="Buscar usuario...">
@@ -64,50 +94,17 @@
                 </nav>
             </header>
             
-            <div class="chat-box" id="chat-box">
+            <div class="mensajes" id="mensajes">
                 <div class="mensaje recibido">Hola, ¿cómo estás?</div>
                 <div class="mensaje enviado">¡Hola! Estoy bien, gracias.</div>
             </div>
-            <div class="input-box">
+            <form class="input-box" id="form">
                 <input type="text" id="mensaje" placeholder="Escribe un mensaje...">
-                <button id="enviar">Enviar</button>
-            </div>
+                <button type="submit">Enviar</button>
+            </form>
         </div>
     </div>
 
-    <script>
-        document.getElementById('enviar').addEventListener('click', function() {
-            let mensaje = document.getElementById('mensaje').value;
-            if (mensaje.trim() !== "") {
-                let chatBox = document.getElementById('chat-box');
-                let nuevoMensaje = document.createElement('div');
-                nuevoMensaje.classList.add('mensaje', 'enviado');
-                nuevoMensaje.textContent = mensaje;
-                chatBox.appendChild(nuevoMensaje);
-                document.getElementById('mensaje').value = "";
-                chatBox.scrollTop = chatBox.scrollHeight;
-            }
-        });
-
-        document.getElementById('searchUser').addEventListener('input', function() {
-            let filter = this.value.toLowerCase();
-            let users = document.querySelectorAll('.user');
-            users.forEach(user => {
-                if (user.textContent.toLowerCase().includes(filter)) {
-                    user.style.display = "flex";
-                } else {
-                    user.style.display = "none";
-                }
-            });
-        });
-
-    // Mostrar/ocultar la sidebar en móviles
-    document.getElementById('toggleSidebar').addEventListener('click', function () {
-        const sidebar = document.querySelector('.sidebar');
-        sidebar.classList.toggle('active');
-    });
-
-
-    </script>
+    
 </body>
 </html>
