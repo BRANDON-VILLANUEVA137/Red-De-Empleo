@@ -5,6 +5,39 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Empleos - Red de Empleo</title>
     <link rel="stylesheet" href="/Public/styles/principal.css">
+    <style>
+        /* Estilos para el formulario (inicialmente oculto) */
+        .crear-empleo {
+            background: #f5f5f5;
+            padding: 20px;
+            margin-bottom: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            display: none; /* Oculto por defecto */
+        }
+
+        .crear-empleo.visible {
+            display: block; /* Se muestra con esta clase */
+        }
+
+        #formNuevoEmpleo {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        /* Botón para mostrar/ocultar el formulario */
+        #btnMostrarFormulario {
+            background-color: #2ecc71;
+            margin-bottom: 20px;
+        }
+
+        #btnMostrarFormulario:hover {
+            background-color: #27ae60;
+        }
+    </style>
 </head>
 <body>
     <header>
@@ -15,39 +48,180 @@
                 <li><a href="Contacto_Sesion.html">Contacto</a></li>
                 <li><a href="Perfil.html">Mi Perfil</a></li>
                 <li><a href="Chat.html">Mi Chat</a></li>  
-                <li><a href="/pages/Home.html" class="btn">Cerrar Sesion</a></li>
+                <li><a href="/pages/Home.html" class="btn">Cerrar Sesión</a></li>
             </ul>
         </nav>
     </header>
     <section class="empleos">
         <h2>Encuentra el empleo ideal</h2>
-        <div class="filtros">
-            <select>
-                <option value="">Categoría</option>
-                <option value="remoto">Remoto</option>
-                <option value="presencial">Presencial</option>
-            </select>
-            <select>
-                <option value="">Ubicación</option>
-                <option value="bogota">Bogotá</option>
-                <option value="medellin">Medellín</option>
-            </select>
-            <button class="btn">Filtrar</button>
+        
+        <!-- Botón para mostrar formulario -->
+        <button id="btnMostrarFormulario" class="btn">Publicar Nuevo Empleo</button>
+        
+        <!-- Formulario para crear nuevo empleo (oculto inicialmente) -->
+        <div class="crear-empleo" id="formularioEmpleo">
+            <h3>Publicar Nuevo Empleo</h3>
+            <form id="formNuevoEmpleo">
+                <input type="text" id="titulo" placeholder="Título del empleo" required>
+                <textarea id="descripcion" placeholder="Descripción del puesto"></textarea>
+                <input type="text" id="ubicacion" placeholder="Ubicación (ej: Remoto, Bogotá, etc.)">
+                <textarea id="requisitos" placeholder="Requisitos para el puesto"></textarea>
+                <select id="categoria_id" required>
+                    <option value="">Seleccione categoría</option>
+                    <option value="1">Tecnología</option>
+                    <option value="2">Administración</option>
+                    <option value="3">Diseño</option>
+                </select>
+                <div class="form-buttons">
+                    <button type="submit" class="btn">Publicar</button>
+                    <button type="button" id="btnCancelar" class="btn btn-cancelar">Cancelar</button>
+                </div>
+            </form>
         </div>
-        <div class="empleo-lista">
-            <div class="empleo">
-                <h3>Diseñador Gráfico</h3>
-                <p>Empresa: <a href="Empleador_Sesion.html">Creativos S.A.</a> </p>
-                <p>Ubicación: Remoto</p>
-                <a href="#" class="btn">Postular</a>
-            </div>
-            <div class="empleo">
-                <h3>Asistente Administrativo</h3>
-                <p>Empresa: <a href="Empleador_Sesion.html">Gestores Ltda.</a></p>
-                <p>Ubicación: Presencial - Medellín</p>
-                <a href="#" class="btn">Postular</a>
-            </div>
+
+        <!-- Filtros y lista de empleos -->
+        <div class="filtros">
+            <select id="filtro-categoria">
+                <option value="">Todas las categorías</option>
+                <option value="1">Tecnología</option>
+                <option value="2">Administración</option>
+            </select>
+            <select id="filtro-ubicacion">
+                <option value="">Todas las ubicaciones</option>
+                <option value="remoto">Remoto</option>
+                <option value="bogota">Bogotá</option>
+            </select>
+            <button id="btnFiltrar" class="btn">Filtrar</button>
+        </div>
+
+        <div class="empleo-lista" id="lista-empleos">
+            <!-- Los empleos se cargarán aquí -->
         </div>
     </section>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', async () => {
+            // Elementos del DOM
+            const formulario = document.getElementById('formularioEmpleo');
+            const btnMostrarForm = document.getElementById('btnMostrarFormulario');
+            const btnCancelar = document.getElementById('btnCancelar');
+            
+            // Cargar empleos al iniciar
+            await cargarEmpleos();
+            
+            // Mostrar/ocultar formulario
+            btnMostrarForm.addEventListener('click', () => {
+                formulario.classList.toggle('visible');
+                if (formulario.classList.contains('visible')) {
+                    btnMostrarForm.textContent = 'Ocultar Formulario';
+                } else {
+                    btnMostrarForm.textContent = 'Publicar Nuevo Empleo';
+                }
+            });
+            
+            // Cancelar formulario
+            btnCancelar.addEventListener('click', () => {
+                formulario.classList.remove('visible');
+                btnMostrarForm.textContent = 'Publicar Nuevo Empleo';
+                document.getElementById('formNuevoEmpleo').reset();
+            });
+            
+            // Manejar envío del formulario
+            document.getElementById('formNuevoEmpleo').addEventListener('submit', async (e) => {
+                e.preventDefault();
+                
+                const token = localStorage.getItem('token');
+                const empleadorId = localStorage.getItem('userId');
+                
+                if (!token || !empleadorId) {
+                    alert('Debes iniciar sesión como empleador para publicar empleos');
+                    return;
+                }
+
+                const empleoData = {
+                    id_empleador: empleadorId,
+                    titulo: document.getElementById('titulo').value,
+                    descripcion: document.getElementById('descripcion').value,
+                    ubicacion: document.getElementById('ubicacion').value,
+                    requisitos: document.getElementById('requisitos').value,
+                    categoria_id: document.getElementById('categoria_id').value
+                };
+
+                try {
+                    const response = await fetch('http://localhost:3000/api/jobs', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': `Bearer ${token}`
+                        },
+                        body: JSON.stringify(empleoData)
+                    });
+
+                    const result = await response.json();
+                    
+                    if (response.ok) {
+                        alert('¡Empleo publicado con éxito!');
+                        document.getElementById('formNuevoEmpleo').reset();
+                        formulario.classList.remove('visible');
+                        btnMostrarForm.textContent = 'Publicar Nuevo Empleo';
+                        await cargarEmpleos();
+                    } else {
+                        throw new Error(result.error || 'Error al publicar empleo');
+                    }
+                } catch (error) {
+                    console.error('Error:', error);
+                    alert(error.message);
+                }
+            });
+
+            // Manejar filtros
+            document.getElementById('btnFiltrar').addEventListener('click', cargarEmpleos);
+        });
+
+        // Función para cargar empleos
+        async function cargarEmpleos() {
+            try {
+                const categoria = document.getElementById('filtro-categoria').value;
+                const ubicacion = document.getElementById('filtro-ubicacion').value;
+                
+                let url = 'http://localhost:3000/api/jobs';
+                const params = [];
+                
+                if (categoria) params.push(`categoria_id=${categoria}`);
+                if (ubicacion) params.push(`ubicacion=${ubicacion}`);
+                
+                if (params.length > 0) {
+                    url += `?${params.join('&')}`;
+                }
+
+                const response = await fetch(url);
+                const empleos = await response.json();
+                
+                const listaEmpleos = document.getElementById('lista-empleos');
+                listaEmpleos.innerHTML = '';
+                
+                if (empleos.length === 0) {
+                    listaEmpleos.innerHTML = '<p>No se encontraron empleos con esos filtros</p>';
+                    return;
+                }
+
+                empleos.forEach(empleo => {
+                    const empleoElement = document.createElement('div');
+                    empleoElement.className = 'empleo';
+                    empleoElement.innerHTML = `
+                        <h3>${empleo.titulo}</h3>
+                        <p><strong>Descripción:</strong> ${empleo.descripcion || 'No especificado'}</p>
+                        <p><strong>Ubicación:</strong> ${empleo.ubicacion || 'No especificado'}</p>
+                        <p><strong>Requisitos:</strong> ${empleo.requisitos || 'No especificados'}</p>
+                        <a href="#" class="btn" data-id="${empleo.id}">Postular</a>
+                    `;
+                    listaEmpleos.appendChild(empleoElement);
+                });
+            } catch (error) {
+                console.error('Error al cargar empleos:', error);
+                document.getElementById('lista-empleos').innerHTML = '<p>Error al cargar los empleos</p>';
+            }
+        }
+    </script>
 </body>
 </html>

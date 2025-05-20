@@ -1,38 +1,51 @@
-//app.js
+// app.js
 
 import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
-import loginRoutes from './../controllers/routes/loginRoutes.js'; // Ruta de login/registro
-import adminRoutes from './../controllers/routes/adminRoutes.js'; // Rutas del panel admin
-import companyRoutes from './../controllers/routes/companyRoutes.js'; // Rutas para empresa
-import userRoutes from './../controllers/routes/userRoutes.js'; // Rutas para usuario normal
 import session from 'express-session';
 import bcrypt from 'bcryptjs';
+import connection from './config/db.js'; // Asegúrate que la ruta esté bien
 
+// Rutas Felipe
+import loginRoutes from './../controller/routes/loginRoutes.js';
+import profileRoutes from './../controller/routes/profileRoutes.js';
+import postulacionRoutes from './../controller/routes/postulacionRoutes.js';
+import jobRoutes from './../controller/routes/jobRoutes.js';
+import categoriasRoutes from './../controller/routes/categoriasRoutes.js';
+import applicationRoutes from './../controller/routes/applicationRoutes.js';
+import authRoutes from './../controller/routes/authRoutes.js';
+
+// Rutas Brandon (panel admin y roles)
+import adminRoutes from './../controllers/routes/adminRoutes.js';
+import companyRoutes from './../controllers/routes/companyRoutes.js';
+import userRoutes from './../controllers/routes/userRoutes.js';
 
 dotenv.config();
 
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-// Configuración de CORS (permitir acceso desde Netlify o cualquier frontend que lo necesite)
+// CORS combinado (desarrollo + producción)
 const allowedOrigins = [
   'http://localhost:3000',
-  'http://127.0.0.1:5500',// Localhost para desarrollo
-  'https://red-de-empleo-production.up.railway.app', 
-  'https://red-de-empleo.netlify.app' // Dominio de tu frontend en Netlify
+  'http://127.0.0.1:5500',
+  'http://localhost:5500',
+  'http://127.0.0.1:15580',
+  'https://red-de-empleo-production.up.railway.app',
+  'https://red-de-empleo.netlify.app'
 ];
 
 const corsOptions = {
   origin: function (origin, callback) {
-    if (allowedOrigins.indexOf(origin) !== -1 || !origin) {
+    if (!origin || allowedOrigins.includes(origin)) {
       callback(null, true);
     } else {
       callback(new Error('No permitido por CORS'));
     }
   },
-  credentials: true // ← ¡ESTO ES LO MÁS IMPORTANTE!
+  credentials: true,
+  optionsSuccessStatus: 204
 };
 
 app.use(cors(corsOptions));
@@ -40,33 +53,41 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(express.static('Public'));
 
-//Manejo de sesiones
+// Sesiones
 app.use(session({
   secret: 'clave_secreta_super_segura',
   resave: false,
   saveUninitialized: false,
   cookie: {
-    secure: true,           // true si usas HTTPS (estás en Railway ✅)
-    sameSite: 'none',       // NECESARIO para que funcione con Netlify (cross-site)
+    secure: true,
+    sameSite: 'none',
     maxAge: 1000 * 60 * 60 * 2
   }
 }));
 
-
-
-
-// Rutas API
-app.use('/api', loginRoutes);
+// Rutas principales
+app.use('/api/auth', loginRoutes);
+app.use('/api/profiles', profileRoutes);
+app.use('/api/jobs', jobRoutes);
+app.use('/api/categories', categoriasRoutes);
+app.use('/api/applications', postulacionRoutes);
 app.use('/api/admin', adminRoutes);
 app.use('/api/company', companyRoutes);
 app.use('/api/user', userRoutes);
 
 // Ruta de prueba
-app.get('/', (req, res) => {
-  res.json({ message: 'Backend funcionando correctamente' });
+app.get('/api/status', (req, res) => {
+  res.json({ status: 'active', version: '1.0.0' });
 });
 
 // Inicio del servidor
 app.listen(PORT, () => {
   console.log(`🚀 Servidor backend corriendo en http://localhost:${PORT}`);
+  connection.connect(err => {
+    if (err) {
+      console.error('❌ Error conectando a MySQL:', err);
+    } else {
+      console.log('✅ Conectado a MySQL como ID:', connection.threadId);
+    }
+  });
 });
