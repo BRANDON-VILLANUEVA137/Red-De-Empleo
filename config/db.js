@@ -1,21 +1,28 @@
 // config/db.js
-import mysql from 'mysql2';
+
+import mysql from 'mysql2/promise';
 import 'dotenv/config';
 
-const connection = mysql.createConnection({
-  host: 'localhost',      // Servidor local
-  user: 'root',           // Tu usuario
-  password: 'pipe2004tr', // Tu contraseña
-  database: 'red_empleo', // Nombre de la BD
-  port: 3306              // Puerto default
+const pool = mysql.createPool({
+  host: process.env.DB_HOST,
+  user: process.env.DB_USER,
+  password: process.env.DB_PASSWORD,
+  database: process.env.DB_NAME,
+  port: process.env.DB_PORT || 3306,
+  waitForConnections: true,
+  connectionLimit: 10,
+  queueLimit: 0
 });
 
-connection.connect((err) => {
-  if (err) {
-    console.error('❌ Error al conectar a MySQL:', err.stack);
-    return;
+// Verificar conexión al iniciar
+(async () => {
+  try {
+    const connection = await pool.getConnection();
+    console.log('✅ Conexión a MySQL (POOL) establecida correctamente');
+    connection.release();
+  } catch (err) {
+    console.error('❌ Error de conexión a MySQL:', err.message);
   }
-  console.log('✅ Conectado a MySQL como ID:', connection.threadId);
-});
+})();
 
-export default connection;
+export default pool;
