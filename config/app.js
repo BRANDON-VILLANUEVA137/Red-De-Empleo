@@ -43,13 +43,17 @@ app.use(express.urlencoded({ extended: false }));
 app.use(express.static('Public'));
 
 //Manejo de sesiones
+const isProduction = process.env.NODE_ENV === 'production';
+const productionDomain = 'red-de-empleo-production.up.railway.app';
+
 app.use(session({
   secret: 'clave_secreta_super_segura',
   resave: false,
   saveUninitialized: false,
   cookie: {
-    secure: true,           // true si usas HTTPS (estás en Railway ✅)
+    secure: isProduction,           // true si usas HTTPS en producción
     sameSite: 'none',       // NECESARIO para que funcione con Netlify (cross-site)
+    domain: isProduction ? productionDomain : undefined,
     maxAge: 1000 * 60 * 60 * 2
   }
 }));
