@@ -75,7 +75,11 @@ app.use('/api/applications', postulacionRoutes);
 app.use('/api/admin', adminRoutes);
 app.use('/api/company', companyRoutes);
 app.use('/api/user', userRoutes);
-
+// Rutas API
+app.use('/api', loginRoutes);
+app.use('/api/admin', adminRoutes);
+app.use('/api/company', companyRoutes);
+app.use('/api/user', userRoutes);
 // Ruta de prueba
 app.get('/api/status', (req, res) => {
   res.json({ status: 'active', version: '1.0.0' });
