@@ -4,13 +4,13 @@
         <table id="usersTable" border="1">
             <thead>
                 <tr>
-                <th>ID</th>
-                <th>Nombre</th>
-                <th>Correo</th>
-                <th>Rol</th>
-                <th>Es Empresa</th>
-                <th>Tipo de Rol</th>
-                <th>Acciones</th>
+                    <th>ID</th>
+                    <th>Nombre</th>
+                    <th>Correo</th>
+                    <th>Rol</th>
+                    <th>Es Empresa</th>
+                    <th>Tipo de Rol</th>
+                    <th>Acciones</th>
                 </tr>
             </thead>
             <tbody>
@@ -18,19 +18,33 @@
             </tbody>
         </table>
     </div>
+
     <div class="card" id="userFormSection" style="display:none;">
         <h2 id="formTitle">Agregar Usuario</h2>
         <form id="userForm">
             <input type="hidden" id="userId" />
             <label for="nombre">Nombre:</label>
             <input type="text" id="nombre" name="nombre" required />
+
+            <label for="email">Email:</label>
+            <input type="email" id="email" name="email" required />
+
+            <label for="rol">Rol:</label>
+            <input type="text" id="rol" name="rol" required />
+
+            <label for="tipoRol">Tipo de Rol:</label>
+            <input type="text" id="tipoRol" name="tipoRol" required />
+
             <label for="esEmpresa">Es Empresa:</label>
             <select id="esEmpresa" name="esEmpresa" required>
                 <option value="0">No</option>
                 <option value="1">Sí</option>
             </select>
+
             <button type="submit">Guardar</button>
             <button type="button" id="btnCancel">Cancelar</button>
         </form>
     </div>
 </section>
+
+<script src="../../Public/admin/admin.js"></script>
