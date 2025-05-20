@@ -17,156 +17,34 @@
             </ul>
         </nav>
     </header>
-
+    
     <section class="empleos">
         <h2>Encuentra el empleo ideal</h2>
         <div class="filtros">
-            <select id="filtro-categoria">
-                <option value="">Todas las categorías</option>
+            <select>
+                <option value="">Categoría</option>
+                <option value="remoto">Remoto</option>
+                <option value="presencial">Presencial</option>
             </select>
-            <select id="filtro-ubicacion">
-                <option value="">Todas las ubicaciones</option>
-                <option value="Remoto">Remoto</option>
-                <option value="Bogotá">Bogotá</option>
-                <option value="Medellín">Medellín</option>
+            <select>
+                <option value="">Ubicación</option>
+                <option value="bogota">Bogotá</option>
+                <option value="medellin">Medellín</option>
             </select>
-            <select id="filtro-tipo">
-                <option value="">Todos los tipos</option>
-                <option value="tiempo_completo">Tiempo completo</option>
-                <option value="medio_tiempo">Medio tiempo</option>
-                <option value="freelance">Freelance</option>
-            </select>
-            <button id="btn-filtrar" class="btn">Filtrar</button>
+            <button class="btn">Filtrar</button>
         </div>
-
-        <div id="empleos-container">
-            <div class="loading">Cargando empleos...</div>
+        <div class="empleo-lista">
+            <div class="empleo">
+                <h3>Diseñador Gráfico</h3>
+                <p>Empresa: Creativos S.A.</p>
+                <p>Ubicación: Remoto</p>
+            </div>
+            <div class="empleo">
+                <h3>Asistente Administrativo</h3>
+                <p>Empresa: Gestores Ltda.</p>
+                <p>Ubicación: Presencial - Medellín</p>
+            </div>
         </div>
     </section>
-
-    <script>
-        const API_URL = 'http://localhost:3000/api/jobs';
-        const API_CATEGORIAS = 'http://localhost:3000/api/categories';
-        const API_BASE_URL = 'http://localhost:3000/api';
-
-        const empleosContainer = document.getElementById('empleos-container');
-        const btnFiltrar = document.getElementById('btn-filtrar');
-        const filtroCategoria = document.getElementById('filtro-categoria');
-        const filtroUbicacion = document.getElementById('filtro-ubicacion');
-        const filtroTipo = document.getElementById('filtro-tipo');
-
-        document.addEventListener('DOMContentLoaded', () => {
-            cargarCategorias();
-            cargarEmpleos();
-        });
-
-        async function cargarCategorias() {
-            try {
-                const response = await fetch(API_CATEGORIAS);
-                const categorias = await response.json();
-
-                categorias.forEach(categoria => {
-                    const option = document.createElement('option');
-                    option.value = categoria.id;
-                    option.textContent = categoria.nombre;
-                    filtroCategoria.appendChild(option);
-                });
-            } catch (error) {
-                console.error('Error al cargar categorías:', error);
-            }
-        }
-
-        async function cargarEmpleos() {
-            try {
-                let url = API_URL;
-                const params = new URLSearchParams();
-
-                if (filtroCategoria.value) params.append('categoria', filtroCategoria.value);
-                if (filtroUbicacion.value) params.append('ubicacion', filtroUbicacion.value);
-                if (filtroTipo.value) params.append('tipo_empleo', filtroTipo.value);
-
-                if (params.toString()) url += '?' + params.toString();
-
-                const response = await fetch(url);
-                if (!response.ok) throw new Error(`Error HTTP: ${response.status}`);
-
-                const empleos = await response.json();
-                mostrarEmpleos(empleos);
-            } catch (error) {
-                console.error("Error al cargar empleos:", error);
-                empleosContainer.innerHTML = '<div class="error-message">No se pudieron cargar los empleos. Intenta más tarde.</div>';
-            }
-        }
-
-        function mostrarEmpleos(empleos) {
-            if (empleos.length === 0) {
-                empleosContainer.innerHTML = '<div class="error-message">No se encontraron empleos con los filtros seleccionados.</div>';
-                return;
-            }
-
-            empleosContainer.innerHTML = '';
-
-            empleos.forEach(empleo => {
-                const empleoCard = document.createElement('div');
-                empleoCard.className = 'empleo-card';
-                empleoCard.innerHTML = `
-                    <h3>${empleo.titulo}</h3>
-                    <p><strong>Empresa:</strong> ${empleo.empresa || 'Confidencial'}</p>
-                    <p><strong>Ubicación:</strong> ${empleo.ubicacion}</p>
-                    <p><strong>Tipo:</strong> ${formatTipoEmpleo(empleo.tipo_empleo)}</p>
-                    <p><strong>Salario:</strong> ${empleo.salario ? '$' + empleo.salario : 'A convenir'}</p>
-                    <p>${empleo.descripcion.substring(0, 100)}...</p>
-                    <div class="empleo-acciones">
-                        <a href="detalle_empleo.html?id=${empleo.id}" class="btn-ver">Ver detalles</a>
-                        <button onclick="aplicarEmpleo(${empleo.id})" class="btn-aplicar">Aplicar</button>
-                    </div>
-                `;
-                empleosContainer.appendChild(empleoCard);
-            });
-        }
-
-        function formatTipoEmpleo(tipo) {
-            const tipos = {
-                'tiempo_completo': 'Tiempo completo',
-                'medio_tiempo': 'Medio tiempo',
-                'remoto': 'Remoto',
-                'freelance': 'Freelance'
-            };
-            return tipos[tipo] || tipo;
-        }
-
-        async function aplicarEmpleo(empleoId) {
-            try {
-                const usuarioId = localStorage.getItem('userId');
-                if (!usuarioId) {
-                    alert('Debes iniciar sesión para aplicar a este empleo');
-                    window.location.href = 'login.html';
-                    return;
-                }
-
-                const response = await fetch(`${API_BASE_URL}/postulaciones`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        empleo_id: empleoId,
-                        usuario_id: usuarioId,
-                        estado: 'pendiente'
-                    })
-                });
-
-                if (response.ok) {
-                    alert('¡Has aplicado exitosamente al empleo!');
-                } else {
-                    const errorData = await response.json();
-                    alert('Error al aplicar: ' + (errorData.message || 'Intenta de nuevo.'));
-                }
-            } catch (error) {
-                console.error('Error al aplicar:', error);
-                alert('Error al aplicar al empleo: ' + error.message);
-            }
-        }
-
-        btnFiltrar.addEventListener('click', cargarEmpleos);
-    </script>
 </body>
 </html>
