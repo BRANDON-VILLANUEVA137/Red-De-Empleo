@@ -1,0 +1,123 @@
+mysql://root:sPIOkBmgcyGjpGqjXYpBdTwlwLTfOUeP@shinkansen.proxy.rlwy.net:40544/railway
+
+
+
+CREATE DATABASE IF NOT EXISTS red_empleo;
+USE red_empleo;
+
+-- Tabla de roles de usuario
+CREATE TABLE roles (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    nombre VARCHAR(50) NOT NULL UNIQUE
+);
+use red_empleo; 
+INSERT INTO `red_empleo`.`roles` (`id`, `nombre`) VALUES ('1', 'Usuario_Empresa');
+INSERT INTO `red_empleo`.`roles` (`id`, `nombre`) VALUES ('2', 'Usuario_Normal');
+INSERT INTO `red_empleo`.`roles` (`id`, `nombre`) VALUES ('3', 'admin');
+
+-- Tabla de usuarios (trabajadores, empleadores, administradores)
+CREATE TABLE usuarios (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    nombre VARCHAR(100) NOT NULL,
+    correo VARCHAR(100) NOT NULL UNIQUE,
+    contrasena VARCHAR(255) NOT NULL,
+    id_rol INT NOT NULL,
+    autenticacion_google BOOLEAN DEFAULT FALSE,
+    creado_en TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (id_rol) REFERENCES roles(id)
+);
+
+-- Tabla de perfiles (trabajadores o empleadores)
+CREATE TABLE perfiles (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    id_usuario INT NOT NULL,
+    descripcion TEXT,
+    ubicacion VARCHAR(100),
+    habilidades TEXT,
+    experiencia TEXT,
+    formacion TEXT,
+    tipo_perfil ENUM('trabajador', 'empleador') NOT NULL,
+    FOREIGN KEY (id_usuario) REFERENCES usuarios(id) ON DELETE CASCADE
+);
+
+-- Tabla de categorías de empleo
+CREATE TABLE categorias (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    nombre VARCHAR(100) NOT NULL UNIQUE
+);
+
+-- Tabla de ofertas de empleo
+CREATE TABLE empleos (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    id_empleador INT NOT NULL,
+    titulo VARCHAR(150) NOT NULL,
+    descripcion TEXT,
+    ubicacion VARCHAR(100),
+    requisitos TEXT,
+    categoria_id INT,
+    fecha_publicacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (id_empleador) REFERENCES usuarios(id),
+    FOREIGN KEY (categoria_id) REFERENCES categorias(id)
+);
+
+-- Tabla de postulaciones a empleos
+CREATE TABLE postulaciones (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    id_empleo INT NOT NULL,
+    id_trabajador INT NOT NULL,
+    fecha_postulacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    estado ENUM('postulado', 'en revisión', 'aceptado', 'rechazado') DEFAULT 'postulado',
+    FOREIGN KEY (id_empleo) REFERENCES empleos(id) ON DELETE CASCADE,
+    FOREIGN KEY (id_trabajador) REFERENCES usuarios(id) ON DELETE CASCADE
+);
+
+-- Tabla de mensajes (chat entre usuarios)
+CREATE TABLE mensajes (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    emisor_id INT NOT NULL,
+    receptor_id INT NOT NULL,
+    contenido TEXT NOT NULL,
+    fecha_envio TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    leido BOOLEAN DEFAULT FALSE,
+    FOREIGN KEY (emisor_id) REFERENCES usuarios(id),
+    FOREIGN KEY (receptor_id) REFERENCES usuarios(id)
+);
+
+-- Tabla de notificaciones (para match, mensajes, etc.)
+CREATE TABLE notificaciones (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    id_usuario INT NOT NULL,
+    mensaje TEXT NOT NULL,
+    vista BOOLEAN DEFAULT FALSE,
+    fecha_creacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (id_usuario) REFERENCES usuarios(id)
+);
+
+-- Tabla para administradores (esto lo dejo por si necesitamos alguna gestión especial)
+CREATE TABLE administradores (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    id_usuario INT NOT NULL,
+    permisos TEXT,
+    FOREIGN KEY (id_usuario) REFERENCES usuarios(id)
+);
+
+
+DELIMITER $$
+
+CREATE TRIGGER validar_admins
+BEFORE INSERT ON administradores
+FOR EACH ROW
+BEGIN
+  DECLARE rol_usuario INT;
+
+  SELECT id_rol INTO rol_usuario
+  FROM usuarios
+  WHERE id = NEW.id_usuario;
+
+  IF rol_usuario != 3 THEN
+    SIGNAL SQLSTATE '45000'
+    SET MESSAGE_TEXT = 'Solo se pueden registrar administradores con id_rol = 3';
+  END IF;
+END$$
+
+DELIMITER ;
