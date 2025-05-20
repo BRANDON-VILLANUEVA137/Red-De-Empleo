@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Empleos - Red de Empleo</title>
+    <link rel="stylesheet" href="/Public/styles/principal.css">
+    <style>
+        /* Estilos para el formulario (inicialmente oculto) */
+        .crear-empleo {
+            background: #f5f5f5;
+            padding: 20px;
+            margin-bottom: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            display: none; /* Oculto por defecto */
+        }
+
+        .crear-empleo.visible {
+            display: block; /* Se muestra con esta clase */
+        }
+
+        #formNuevoEmpleo {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        /* Botón para mostrar/ocultar el formulario */
+        #btnMostrarFormulario {
+            background-color: #2ecc71;
+            margin-bottom: 20px;
+        }
+
+        #btnMostrarFormulario:hover {
+            background-color: #27ae60;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <nav>
+            <div class="logo">Red de Empleo para Todos</div>
+            <ul>
+                <li><a href="Empleos_Empresa.html">Empleos</a></li>
+                <li><a href="Contacto_Empresa.html">Contacto</a></li>
+                <li><a href="Perfil_Empresa.html">Mi Perfil</a></li>
+                <li><a href="Chat.html">Mi Chat</a></li>  
+                <li><a href="/views/Home.html" class="btn">Cerrar Sesión</a></li>
+            </ul>
+        </nav>
+    </header>
+    <section class="empleos">
+        <h2>Encuentra el empleo ideal</h2>
+        
+        <!-- Botón para mostrar formulario -->
+        <button id="btnMostrarFormulario" class="btn">Publicar Nuevo Empleo</button>
+        
+        <!-- Formulario para crear nuevo empleo (oculto inicialmente) -->
+        <div class="crear-empleo" id="formularioEmpleo">
+            <h3>Publicar Nuevo Empleo</h3>
+            <form id="formNuevoEmpleo">
+                <input type="text" id="titulo" placeholder="Título del empleo" required>
+                <textarea id="descripcion" placeholder="Descripción del puesto"></textarea>
+                <input type="text" id="ubicacion" placeholder="Ubicación (ej: Remoto, Bogotá, etc.)">
+                <textarea id="requisitos" placeholder="Requisitos para el puesto"></textarea>
+                <select id="categoria_id" required>
+                    <option value="">Seleccione categoría</option>
+                    <option value="1">Tecnología</option>
+                    <option value="2">Administración</option>
+                    <option value="3">Diseño</option>
+                </select>
+                <div class="form-buttons">
+                    <button type="submit" class="btn">Publicar</button>
+                    <button type="button" id="btnCancelar" class="btn btn-cancelar">Cancelar</button>
+                </div>
+            </form>
+        </div>
+
+        <!-- Filtros y lista de empleos -->
+        <div class="filtros">
+            <select id="filtro-categoria">
+                <option value="">Todas las categorías</option>
+                <option value="1">Tecnología</option>
+                <option value="2">Administración</option>
+            </select>
+            <select id="filtro-ubicacion">
+                <option value="">Todas las ubicaciones</option>
+                <option value="remoto">Remoto</option>
+                <option value="bogota">Bogotá</option>
+            </select>
+            <button id="btnFiltrar" class="btn">Filtrar</button>
+        </div>
+
+        <div class="empleo-lista" id="lista-empleos">
+            <!-- Los empleos se cargarán aquí -->
+        </div>
+    </section>
+<script src="/Public/options/Empleos_Sesion.js"></script>
+</body>
+</html>
