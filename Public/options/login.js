@@ -1,8 +1,12 @@
+//Login.js
+
+const domain_railway = "https://red-de-empleo-production.up.railway.app";
+
 // 💡 URL del backend dinámico (localhost o producción)
 const API_URL =
   window.location.hostname === 'localhost'
     ? 'http://localhost:3000' // 🚧 Desarrollo local
-    : 'https://tu-backend-en-railway.app'; // ✅ Producción en Railway (cambia esto)
+    : domain_railway // ✅ Producción en Railway (cambia esto)
 
 // Selección de elementos
 const fondo = document.querySelector(".fondo");
@@ -24,20 +28,26 @@ const loginForm = document.querySelector(".login form");
 loginForm.addEventListener("submit", (event) => {
   event.preventDefault();
 
-  const email = loginForm.querySelector("input[type='email']").value;
-  const password = loginForm.querySelector("input[type='password']").value;
+  const correo = loginForm.querySelector("input[type='email']").value;
+  const contrasena = loginForm.querySelector("input[type='password']").value;
 
-  fetch(`${BACKEND_URL}/api/login`, {
+  fetch(`${API_URL}/api/login`, {
     method: 'POST',
+    credentials: 'include', // ← importante para sesiones
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ email, password })
+    body: JSON.stringify({ correo, contrasena })
   })
     .then(res => res.json())
     .then(data => {
-      if (data.message === 'Inicio de sesión exitoso') {
-        window.location.href = "views/Inicio_sesion/Home_Sesion";
+      if (data.mensaje === 'Login exitoso') {
+        // Use redirectTo from backend response for role-based redirection
+        if (data.redirectTo) {
+          window.location.href = data.redirectTo;
+        } else {
+          window.location.href = "/views/Inicio_sesion/Home_Sesion";
+        }
       } else {
-        alert(data.message);
+        alert(data.mensaje);
       }
     })
     .catch(error => console.error("Error:", error));
@@ -49,19 +59,19 @@ registerForm.addEventListener("submit", (event) => {
   event.preventDefault();
 
   const nombre = registerForm.querySelector("#nombre").value;
-  const email = registerForm.querySelector("#email_register").value;
-  const password = registerForm.querySelector("#password_register").value;
+  const correo = registerForm.querySelector("#email_register").value;
+  const contrasena = registerForm.querySelector("#password_register").value;
   const esEmpresa = registerForm.querySelector("input[type='checkbox']").checked;
 
-  fetch(`${BACKEND_URL}/api/register`, {
+  fetch(`${API_URL}/api/register`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ nombre, email, password, esEmpresa })
+    body: JSON.stringify({ nombre, correo, contrasena, id_rol: esEmpresa ? 2 : 1 }) 
   })
     .then(res => res.json())
     .then(data => {
-      alert(data.message);
-      if (data.message === 'Usuario registrado correctamente') {
+      alert(data.mensaje);
+      if (data.mensaje === 'Usuario registrado') {
         window.location.href = "/login";
       }
     })

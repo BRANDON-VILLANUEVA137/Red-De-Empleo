@@ -1,5 +1,7 @@
+//LoginRoutes.js
+
 import express from 'express';
-import loginController from '../loginController.js'; // ¡OJO! Asegúrate de poner la extensión .js
+import loginController from '../loginController.js'; 
 
 const router = express.Router();
 

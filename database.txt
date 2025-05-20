@@ -10,6 +10,10 @@ CREATE TABLE roles (
     id INT AUTO_INCREMENT PRIMARY KEY,
     nombre VARCHAR(50) NOT NULL UNIQUE
 );
+use red_empleo; 
+INSERT INTO `red_empleo`.`roles` (`id`, `nombre`) VALUES ('1', 'Usuario_Empresa');
+INSERT INTO `red_empleo`.`roles` (`id`, `nombre`) VALUES ('2', 'Usuario_Normal');
+INSERT INTO `red_empleo`.`roles` (`id`, `nombre`) VALUES ('3', 'admin');
 
 -- Tabla de usuarios (trabajadores, empleadores, administradores)
 CREATE TABLE usuarios (
@@ -96,3 +100,24 @@ CREATE TABLE administradores (
     permisos TEXT,
     FOREIGN KEY (id_usuario) REFERENCES usuarios(id)
 );
+
+
+DELIMITER $$
+
+CREATE TRIGGER validar_admins
+BEFORE INSERT ON administradores
+FOR EACH ROW
+BEGIN
+  DECLARE rol_usuario INT;
+
+  SELECT id_rol INTO rol_usuario
+  FROM usuarios
+  WHERE id = NEW.id_usuario;
+
+  IF rol_usuario != 3 THEN
+    SIGNAL SQLSTATE '45000'
+    SET MESSAGE_TEXT = 'Solo se pueden registrar administradores con id_rol = 3';
+  END IF;
+END$$
+
+DELIMITER ;
