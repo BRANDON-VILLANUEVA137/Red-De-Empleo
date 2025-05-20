@@ -1,4 +1,3 @@
-import Profile from '../modules/Profile.js';
 import db from '../config/db.js';
 
 // Helper para validar datos del perfil

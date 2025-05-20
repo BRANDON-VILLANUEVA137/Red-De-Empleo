@@ -5,16 +5,17 @@ import cors from 'cors';
 import dotenv from 'dotenv';
 import session from 'express-session';
 import bcrypt from 'bcryptjs';
-import connection from './config/db.js'; // Asegúrate que la ruta esté bien
+import pool from './db.js'; // o desde donde lo tengas
+
+// No necesitas llamar a .connect() aquí.
+// Ya se verifica la conexión automáticamente en db.js
 
 // Rutas Felipe
-import loginRoutes from './../controller/routes/loginRoutes.js';
-import profileRoutes from './../controller/routes/profileRoutes.js';
-import postulacionRoutes from './../controller/routes/postulacionRoutes.js';
-import jobRoutes from './../controller/routes/jobRoutes.js';
-import categoriasRoutes from './../controller/routes/categoriasRoutes.js';
-import applicationRoutes from './../controller/routes/applicationRoutes.js';
-import authRoutes from './../controller/routes/authRoutes.js';
+import loginRoutes from './../controllers/routes/loginRoutes.js';
+import profileRoutes from './../controllers/routes/profileRoutes.js';
+import postulacionRoutes from './../controllers/routes/postulacionRoutes.js';
+import jobRoutes from './../controllers/routes/jobRoutes.js';
+import categoriasRoutes from './../controllers/routes/categoriasRoutes.js';
 
 // Rutas Brandon (panel admin y roles)
 import adminRoutes from './../controllers/routes/adminRoutes.js';
@@ -83,11 +84,4 @@ app.get('/api/status', (req, res) => {
 // Inicio del servidor
 app.listen(PORT, () => {
   console.log(`🚀 Servidor backend corriendo en http://localhost:${PORT}`);
-  connection.connect(err => {
-    if (err) {
-      console.error('❌ Error conectando a MySQL:', err);
-    } else {
-      console.log('✅ Conectado a MySQL como ID:', connection.threadId);
-    }
-  });
 });
