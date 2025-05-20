@@ -4,12 +4,9 @@ import offerController from '../offerController.js';
 import reportController from '../reportController.js';
 import metricController from '../metricController.js';
 import { getAllAdministradores, addAdministrador } from '../modules/adminModels.js';
-import { protegerRutaAPI, soloAdmin } from '../../middlewares/authMiddleware.js';
+
 
 const router = express.Router();
-
-// ✅ Middleware global para todas las rutas de admin:
-router.use(protegerRutaAPI, soloAdmin);
 
 
 // Rutas para usuarios
@@ -58,7 +55,7 @@ router.post('/administradores', async (req, res) => {
     }
     const newId = await addAdministrador(id_usuario, permisos || '');
     res.status(201).json({ id: newId });
-   } catch (error) {
+  } catch (error) {
     if (error.sqlState === '45000') {
       return res.status(400).json({ message: error.message });
     }
