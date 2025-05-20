@@ -1,228 +1,391 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Panel Admin - Inicio</title>
-    <link rel="stylesheet" href="../../Public/styles/admin.css" />
-</head>
-<body>
-    <div class="admin-container">
-        <aside class="sidebar">
-            <div class="sidebar-header">
-                <h2>Admin</h2>
-            </div>
-            <nav class="sidebar-nav">
-                <ul>
-                    <li><a href="#" id="dashboardLink" class="active">Dashboard</a></li>
-                    <li><a href="#" id="usersLink">Usuarios</a></li>
-                    <li><a href="#" id="offersLink">Ofertas</a></li>
-                    <li><a href="#" id="reportsLink">Reportes</a></li>
-                    <li><a href="#" id="metricsLink">Métricas</a></li>
-                    <li><a href="#" id="administradoresLink">Administradores</a></li>
-                </ul>
-            </nav>
-        </aside>
-        <div class="main-content">
-            <header class="main-header">
-                <h1>Panel de Administración</h1>
-                <div class="user-info">
-                    <span>Hola, Admin</span>
-                </div>
-            </header>
-            <main>
-                <section class="dashboard-cards" id="dashboardSection">
-                    <div class="card">
-                        <h2>Información General</h2>
-                        <p>Bienvenido al panel de administración. Aquí puedes gestionar usuarios, ofertas, reportes y métricas.</p>
-                        <ul>
-                            <li>Total de usuarios registrados: <strong>--</strong></li>
-                            <li>Total de ofertas publicadas: <strong>--</strong></li>
-                            <li>Total de reportes generados: <strong>--</strong></li>
-                            <li>Total de métricas registradas: <strong>--</strong></li>
-                        </ul>
-                    </div>
-                    <div class="card">
-                        <h2>Guía de Uso</h2>
-                        <ol>
-                            <li>Utiliza el menú lateral para navegar entre las secciones.</li>
-                            <li>En cada sección puedes agregar, editar o eliminar registros.</li>
-                            <li>Para agregar un nuevo registro, haz clic en el botón "Agregar".</li>
-                            <li>Para editar o eliminar, utiliza los botones correspondientes en cada fila de la tabla.</li>
-                            <li>Recuerda guardar los cambios antes de salir de cada formulario.</li>
-                        </ol>
-                    </div>
-                </section>
-                <section class="dashboard-cards" id="usersSection" style="display:none;">
-                    <div class="card">
-                        <!-- Botón "Agregar Usuario" eliminado según solicitud -->
-                        <table id="usersTable" border="1">
-                            <thead>
-                                <tr>
-                                    <th>ID</th>
-                                    <th>Nombre</th>
-                                    <th>Email</th>
-                                    <th>Es Empresa</th>
-                                    <th>Acciones</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <!-- Usuarios cargados dinámicamente con botones Editar y Eliminar -->
-                            </tbody>
-                        </table>
-                    </div>
-                    <div class="card" id="userFormSection" style="display:none;">
-                        <h2 id="formTitle">Editar Usuario</h2>
-                        <form id="userForm">
-                            <input type="hidden" id="userId" />
-                            <label for="nombre">Nombre:</label>
-                            <input type="text" id="nombre" name="nombre" required />
-                            <label for="email">Email:</label>
-                            <input type="email" id="email" name="email" required />
-                            <label for="esEmpresa">Es Empresa:</label>
-                            <select id="esEmpresa" name="esEmpresa" required>
-                                <option value="0">No</option>
-                                <option value="1">Sí</option>
-                            </select>
-                            <button type="submit">Guardar</button>
-                            <button type="button" id="btnCancel">Cancelar</button>
-                        </form>
-                    </div>
-                </section>
-                <section class="dashboard-cards" id="administradoresSection" style="display:none;">
-                    <div class="card">
-                        <button id="btnAddAdministrador">Agregar Administrador</button>
-                        <table id="administradoresTable" border="1">
-                            <thead>
-                                <tr>
-                                    <th>ID</th>
-                                    <th>Nombre</th>
-                                    <th>Email</th>
-                                    <th>Permisos</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <!-- Administradores cargados dinámicamente -->
-                            </tbody>
-                        </table>
-                    </div>
-                    <div class="card" id="administradorFormSection" style="display:none;">
-                        <h2>Agregar Administrador</h2>
-                        <form id="administradorForm">
-                            <label for="id_usuario">ID Usuario:</label>
-                            <input type="number" id="id_usuario" name="id_usuario" required />
-                            <label for="permisos">Permisos:</label>
-                            <textarea id="permisos" name="permisos"></textarea>
-                            <button type="submit">Guardar</button>
-                            <button type="button" id="btnCancelAdministrador">Cancelar</button>
-                        </form>
-                    </div>
-                </section>
-                <section class="dashboard-cards" id="offersSection" style="display:none;">
-                    <div class="card">
-                        <!-- Botón "Agregar Oferta" eliminado según solicitud -->
-                        <table id="offersTable" border="1">
-                            <thead>
-                                <tr>
-                                    <th>ID</th>
-                                    <th>Título</th>
-                                    <th>Descripción</th>
-                                    <th>Empresa ID</th>
-                                    <th>Fecha Publicación</th>
-                                    <th>Acciones</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <!-- Ofertas cargadas dinámicamente con botones Editar y Eliminar -->
-                            </tbody>
-                        </table>
-                    </div>
-                    <div class="card" id="offerFormSection" style="display:none;">
-                        <h2 id="formTitle">Editar Oferta</h2>
-                        <form id="offerForm">
-                            <input type="hidden" id="offerId" />
-                            <label for="titulo">Título:</label>
-                            <input type="text" id="titulo" name="titulo" required />
-                            <label for="descripcion">Descripción:</label>
-                            <textarea id="descripcion" name="descripcion" required></textarea>
-                            <label for="empresaId">Empresa ID:</label>
-                            <input type="number" id="empresaId" name="empresaId" required />
-                            <label for="fechaPublicacion">Fecha Publicación:</label>
-                            <input type="date" id="fechaPublicacion" name="fechaPublicacion" required />
-                            <button type="submit">Guardar</button>
-                            <button type="button" id="btnCancel">Cancelar</button>
-                        </form>
-                    </div>
-                </section>
-                <section class="dashboard-cards" id="reportsSection" style="display:none;">
-                    <div class="card">
-                        <!-- Botón "Agregar Reporte" eliminado según solicitud -->
-                        <table id="reportsTable" border="1">
-                            <thead>
-                                <tr>
-                                    <th>ID</th>
-                                    <th>Título</th>
-                                    <th>Descripción</th>
-                                    <th>Fecha Reporte</th>
-                                    <th>Acciones</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <!-- Reportes cargados dinámicamente con botones Editar y Eliminar -->
-                            </tbody>
-                        </table>
-                    </div>
-                    <div class="card" id="reportFormSection" style="display:none;">
-                        <h2 id="formTitle">Editar Reporte</h2>
-                        <form id="reportForm">
-                            <input type="hidden" id="reportId" />
-                            <label for="titulo">Título:</label>
-                            <input type="text" id="titulo" name="titulo" required />
-                            <label for="descripcion">Descripción:</label>
-                            <textarea id="descripcion" name="descripcion" required></textarea>
-                            <label for="fechaReporte">Fecha Reporte:</label>
-                            <input type="date" id="fechaReporte" name="fechaReporte" required />
-                            <button type="submit">Guardar</button>
-                            <button type="button" id="btnCancel">Cancelar</button>
-                        </form>
-                    </div>
-                </section>
-                <section class="dashboard-cards" id="metricsSection" style="display:none;">
-                    <div class="card">
-                        <!-- Botón "Agregar Métrica" eliminado según solicitud -->
-                        <table id="metricsTable" border="1">
-                            <thead>
-                                <tr>
-                                    <th>ID</th>
-                                    <th>Nombre</th>
-                                    <th>Valor</th>
-                                    <th>Fecha Medición</th>
-                                    <th>Acciones</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <!-- Métricas cargadas dinámicamente con botones Editar y Eliminar -->
-                            </tbody>
-                        </table>
-                    </div>
-                    <div class="card" id="metricFormSection" style="display:none;">
-                        <h2 id="formTitle">Editar Métrica</h2>
-                        <form id="metricForm">
-                            <input type="hidden" id="metricId" />
-                            <label for="nombre">Nombre:</label>
-                            <input type="text" id="nombre" name="nombre" required />
-                            <label for="valor">Valor:</label>
-                            <input type="number" id="valor" name="valor" step="any" required />
-                            <label for="fechaMedicion">Fecha Medición:</label>
-                            <input type="date" id="fechaMedicion" name="fechaMedicion" required />
-                            <button type="submit">Guardar</button>
-                            <button type="button" id="btnCancel">Cancelar</button>
-                        </form>
-                    </div>
-                </section>
-            </main>
-        </div>
-    </div>
-    <script src="../../Public/admin/admin.js"></script>
-</body>
-</html>
+document.addEventListener('DOMContentLoaded', () => {
+    const dashboardLink = document.getElementById('dashboardLink');
+    const usersLink = document.getElementById('usersLink');
+    const offersLink = document.getElementById('offersLink');
+    const reportsLink = document.getElementById('reportsLink');
+    const metricsLink = document.getElementById('metricsLink');
+
+    const dashboardSection = document.getElementById('dashboardSection');
+    const usersSection = document.getElementById('usersSection');
+    const offersSection = document.getElementById('offersSection');
+    const reportsSection = document.getElementById('reportsSection');
+    const metricsSection = document.getElementById('metricsSection');
+
+    function showSection(sectionToShow) {
+        dashboardSection.style.display = 'none';
+        usersSection.style.display = 'none';
+        offersSection.style.display = 'none';
+        reportsSection.style.display = 'none';
+        metricsSection.style.display = 'none';
+
+        sectionToShow.style.display = 'block';
+
+        dashboardLink.classList.remove('active');
+        usersLink.classList.remove('active');
+        offersLink.classList.remove('active');
+        reportsLink.classList.remove('active');
+        metricsLink.classList.remove('active');
+
+        if (sectionToShow === dashboardSection) {
+            dashboardLink.classList.add('active');
+        } else if (sectionToShow === usersSection) {
+            usersLink.classList.add('active');
+            fetchUsers();
+        } else if (sectionToShow === offersSection) {
+            offersLink.classList.add('active');
+            fetchOffers();
+        } else if (sectionToShow === reportsSection) {
+            reportsLink.classList.add('active');
+            fetchReports();
+        } else if (sectionToShow === metricsSection) {
+            metricsLink.classList.add('active');
+            fetchMetrics();
+        }
+    }
+
+    // Base URL for backend API
+    const API_BASE_URL = 'https://red-de-empleo-production.up.railway.app/api/admin';
+
+    // Funciones para obtener datos desde el backend con prefijo /api/admin
+    async function fetchUsers() {
+    try {
+        const response = await fetch(`${API_BASE_URL}/users`, {
+            method: 'GET',
+            credentials: 'include' // ✅ Aquí correctamente colocado
+        });
+
+        if (!response.ok) throw new Error('Error al obtener usuarios');
+        const usersData = await response.json();
+        renderUsersTable(usersData);
+        
+    } catch (error) {
+        console.error(error);
+        alert('No se pudieron cargar los usuarios');
+    }
+}
+
+   async function fetchOffers() {
+    try {
+        const response = await fetch(`${API_BASE_URL}/offers`, {
+            method: 'GET',
+            credentials: 'include'
+        });
+
+        if (!response.ok) throw new Error('Error al obtener ofertas');
+        const offersData = await response.json();
+        renderOffersTable(offersData);
+    } catch (error) {
+        console.error(error);
+        alert('No se pudieron cargar las ofertas');
+    }
+}
+
+async function fetchReports() {
+    try {
+        const response = await fetch(`${API_BASE_URL}/reports`, {
+            method: 'GET',
+            credentials: 'include'
+        });
+
+        if (!response.ok) throw new Error('Error al obtener reportes');
+        const reportsData = await response.json();
+        renderReportsTable(reportsData);
+    } catch (error) {
+        console.error(error);
+        alert('No se pudieron cargar los reportes');
+    }
+}
+
+async function fetchMetrics() {
+    try {
+        const response = await fetch(`${API_BASE_URL}/metrics`, {
+            method: 'GET',
+            credentials: 'include'
+        });
+
+        if (!response.ok) throw new Error('Error al obtener métricas');
+        const metricsData = await response.json();
+        renderMetricsTable(metricsData);
+    } catch (error) {
+        console.error(error);
+        alert('No se pudieron cargar las métricas');
+    }
+}
+
+    // Funciones para renderizar tablas con datos reales y mapeo de campos snake_case a camelCase
+    const usersTableBody = document.querySelector('#usersTable tbody');
+    function renderUsersTable(usersData) {
+        usersTableBody.innerHTML = '';
+        usersData.forEach(user => {
+            const esEmpresa = user.es_empresa || user.esEmpresa;
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+                <td>${user.id}</td>
+                <td>${user.nombre}</td>
+                <td>${user.email}</td>
+                <td>${esEmpresa ? 'Sí' : 'No'}</td>
+                <td>
+                    <button class="editUserBtn" data-id="${user.id}">Editar</button>
+                    <button class="deleteUserBtn" data-id="${user.id}">Eliminar</button>
+                </td>
+            `;
+            usersTableBody.appendChild(tr);
+        });
+    }
+
+    const offersTableBody = document.querySelector('#offersTable tbody');
+    function renderOffersTable(offersData) {
+        offersTableBody.innerHTML = '';
+        offersData.forEach(offer => {
+            const empresaId = offer.empresa_id || offer.empresaId;
+            const fechaPublicacion = offer.fecha_publicacion || offer.fechaPublicacion;
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+                <td>${offer.id}</td>
+                <td>${offer.titulo}</td>
+                <td>${offer.descripcion}</td>
+                <td>${empresaId}</td>
+                <td>${fechaPublicacion}</td>
+                <td>
+                    <button class="editOfferBtn" data-id="${offer.id}">Editar</button>
+                    <button class="deleteOfferBtn" data-id="${offer.id}">Eliminar</button>
+                </td>
+            `;
+            offersTableBody.appendChild(tr);
+        });
+    }
+
+    const reportsTableBody = document.querySelector('#reportsTable tbody');
+    function renderReportsTable(reportsData) {
+        reportsTableBody.innerHTML = '';
+        reportsData.forEach(report => {
+            const fechaReporte = report.fecha_reporte || report.fechaReporte;
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+                <td>${report.id}</td>
+                <td>${report.titulo}</td>
+                <td>${report.descripcion}</td>
+                <td>${fechaReporte}</td>
+                <td>
+                    <button class="editReportBtn" data-id="${report.id}">Editar</button>
+                    <button class="deleteReportBtn" data-id="${report.id}">Eliminar</button>
+                </td>
+            `;
+            reportsTableBody.appendChild(tr);
+        });
+    }
+
+    const metricsTableBody = document.querySelector('#metricsTable tbody');
+    function renderMetricsTable(metricsData) {
+        metricsTableBody.innerHTML = '';
+        metricsData.forEach(metric => {
+            const fechaMedicion = metric.fecha_medicion || metric.fechaMedicion;
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+                <td>${metric.id}</td>
+                <td>${metric.nombre}</td>
+                <td>${metric.valor}</td>
+                <td>${fechaMedicion}</td>
+                <td>
+                    <button class="editMetricBtn" data-id="${metric.id}">Editar</button>
+                    <button class="deleteMetricBtn" data-id="${metric.id}">Eliminar</button>
+                </td>
+            `;
+            metricsTableBody.appendChild(tr);
+        });
+    }
+
+    // Event delegation para botones editar y eliminar usuarios
+    usersTableBody.addEventListener('click', (e) => {
+        if (e.target.classList.contains('editUserBtn')) {
+            const userId = e.target.getAttribute('data-id');
+            editUser(userId);
+        } else if (e.target.classList.contains('deleteUserBtn')) {
+            const userId = e.target.getAttribute('data-id');
+            deleteUser(userId);
+        }
+    });
+
+    // Funciones editUser y deleteUser actualizadas para trabajar con datos reales
+    async function editUser(id) {
+        try {
+            const response = await fetch(`${API_BASE_URL}/users/${id}`);
+            if (!response.ok) throw new Error('Error al obtener usuario');
+            const user = await response.json();
+            document.getElementById('userId').value = user.id;
+            document.getElementById('nombre').value = user.nombre;
+            document.getElementById('email').value = user.email;
+            document.getElementById('esEmpresa').value = user.es_empresa ? '1' : '0';
+            document.getElementById('userFormSection').style.display = 'block';
+            showSection(usersSection);
+        } catch (error) {
+            console.error(error);
+            alert('No se pudo cargar el usuario para editar');
+        }
+    }
+
+    async function deleteUser(id) {
+        if (!confirm('¿Estás seguro de eliminar este usuario?')) return;
+        try {
+            const response = await fetch(`${API_BASE_URL}/users/${id}`, { method: 'DELETE' });
+            if (!response.ok) throw new Error('Error al eliminar usuario');
+            fetchUsers();
+        } catch (error) {
+            console.error(error);
+            alert('No se pudo eliminar el usuario');
+        }
+    }
+
+    // Manejo del formulario de usuario
+    const userForm = document.getElementById('userForm');
+    userForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const id = parseInt(document.getElementById('userId').value);
+        const nombre = document.getElementById('nombre').value;
+        const email = document.getElementById('email').value;
+        const esEmpresa = document.getElementById('esEmpresa').value === '1';
+
+        const userData = { nombre, email, esEmpresa };
+
+        try {
+            let response;
+            if (id) {
+                response = await fetch(`${API_BASE_URL}/users/${id}`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(userData)
+                });
+            } else {
+                response = await fetch(`${API_BASE_URL}/users`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(userData)
+                });
+            }
+            if (!response.ok) throw new Error('Error al guardar usuario');
+            fetchUsers();
+            document.getElementById('userFormSection').style.display = 'none';
+        } catch (error) {
+            console.error(error);
+            alert('No se pudo guardar el usuario');
+        }
+    });
+
+    // Cancelar formulario
+    document.getElementById('btnCancel').addEventListener('click', () => {
+        document.getElementById('userFormSection').style.display = 'none';
+    });
+
+    // Ocultar botones de agregar si existen
+    ['btnAddUser', 'btnAddOffer', 'btnAddReport', 'btnAddMetric'].forEach(id => {
+        const btn = document.getElementById(id);
+        if (btn) {
+            btn.style.display = 'none';
+        }
+    });
+
+    dashboardLink.addEventListener('click', (e) => {
+        e.preventDefault();
+        showSection(dashboardSection);
+    });
+
+    // Administradores section elements
+    const administradoresLink = document.getElementById('administradoresLink');
+    const administradoresSection = document.getElementById('administradoresSection');
+    const administradoresTableBody = document.querySelector('#administradoresTable tbody');
+    const btnAddAdministrador = document.getElementById('btnAddAdministrador');
+    const administradorFormSection = document.getElementById('administradorFormSection');
+    const administradorForm = document.getElementById('administradorForm');
+    const btnCancelAdministrador = document.getElementById('btnCancelAdministrador');
+
+    administradoresLink.addEventListener('click', (e) => {
+        e.preventDefault();
+        showSection(administradoresSection);
+        fetchAdministradores();
+    });
+
+    btnAddAdministrador.addEventListener('click', () => {
+        administradorFormSection.style.display = 'block';
+        btnAddAdministrador.style.display = 'none';
+    });
+
+    btnCancelAdministrador.addEventListener('click', () => {
+        administradorFormSection.style.display = 'none';
+        btnAddAdministrador.style.display = 'block';
+        administradorForm.reset();
+    });
+
+    async function fetchAdministradores() {
+        try {
+            const response = await fetch(`${API_BASE_URL}/administradores`, {
+                method: 'GET',
+                credentials: 'include'
+            });
+            if (!response.ok) throw new Error('Error al obtener administradores');
+            const administradoresData = await response.json();
+            renderAdministradoresTable(administradoresData);
+        } catch (error) {
+            console.error(error);
+            alert('No se pudieron cargar los administradores');
+        }
+    }
+
+    function renderAdministradoresTable(administradoresData) {
+        administradoresTableBody.innerHTML = '';
+        administradoresData.forEach(admin => {
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+                <td>${admin.id}</td>
+                <td>${admin.nombre}</td>
+                <td>${admin.correo}</td>
+                <td>${admin.permisos || ''}</td>
+            `;
+            administradoresTableBody.appendChild(tr);
+        });
+    }
+
+    administradorForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const id_usuario = parseInt(document.getElementById('id_usuario').value);
+        const permisos = document.getElementById('permisos').value;
+
+        try {
+            const response = await fetch(`${API_BASE_URL}/administradores`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                credentials: 'include',
+                body: JSON.stringify({ id_usuario, permisos })
+            });
+            if (!response.ok) throw new Error('Error al agregar administrador');
+            administradorFormSection.style.display = 'none';
+            btnAddAdministrador.style.display = 'block';
+            administradorForm.reset();
+            fetchAdministradores();
+        } catch (error) {
+            console.error(error);
+            alert('No se pudo agregar el administrador');
+        }
+    });
+
+    usersLink.addEventListener('click', (e) => {
+        e.preventDefault();
+        showSection(usersSection);
+    });
+
+    offersLink.addEventListener('click', (e) => {
+        e.preventDefault();
+        showSection(offersSection);
+    });
+
+    reportsLink.addEventListener('click', (e) => {
+        e.preventDefault();
+        showSection(reportsSection);
+    });
+
+    metricsLink.addEventListener('click', (e) => {
+        e.preventDefault();
+        showSection(metricsSection);
+    });
+
+    showSection(dashboardSection);
+});
