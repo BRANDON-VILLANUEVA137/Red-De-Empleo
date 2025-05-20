@@ -1,3 +1,5 @@
+//app.js
+
 import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
@@ -5,9 +7,11 @@ import loginRoutes from './../controllers/routes/loginRoutes.js'; // Ruta de log
 import adminRoutes from './../controllers/routes/adminRoutes.js'; // Rutas del panel admin
 import companyRoutes from './../controllers/routes/companyRoutes.js'; // Rutas para empresa
 import userRoutes from './../controllers/routes/userRoutes.js'; // Rutas para usuario normal
-import adminAuthMiddleware from './../controllers/middleware/adminAuth.js';
 import session from 'express-session';
 import bcrypt from 'bcryptjs';
+import { protegerRutaAPI, soloAdmin } from '../middlewares/authMiddleware.js';
+import { protegerVista } from '../middlewares/authMiddleware.js';
+
 
 dotenv.config();
 
@@ -49,6 +53,12 @@ app.use(session({
     maxAge: 1000 * 60 * 60 * 2
   }
 }));
+
+
+app.get('/views/admin/index.html', protegerVista, (req, res) => {
+  res.sendFile('index.html', { root: 'Public/views/admin' }); // Ajusta si está en otra carpeta
+});
+
 
 // Rutas API
 app.use('/api', loginRoutes);

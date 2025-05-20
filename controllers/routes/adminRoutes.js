@@ -1,16 +1,16 @@
-
 import express from 'express';
 import userController from '../userController.js';
 import offerController from '../offerController.js';
 import reportController from '../reportController.js';
 import metricController from '../metricController.js';
-import adminAuthMiddleware from '../middleware/adminAuth.js';
 import { getAllAdministradores, addAdministrador } from '../modules/adminModels.js';
+import { protegerRutaAPI, soloAdmin } from '../../middlewares/authMiddleware.js';
+
 
 const router = express.Router();
 
-// Apply adminAuthMiddleware to all routes in this router
-// router.use(adminAuthMiddleware);
+// ✅ Middleware global para todas las rutas de admin:
+router.use(protegerRutaAPI, soloAdmin);
 
 // Rutas para usuarios
 router.get('/users', userController.getAllUsers);
@@ -59,6 +59,9 @@ router.post('/administradores', async (req, res) => {
     const newId = await addAdministrador(id_usuario, permisos || '');
     res.status(201).json({ id: newId });
   } catch (error) {
+    if (error.sqlState === '45000') {
+      return res.status(400).json({ message: error.message });
+    }
     res.status(500).json({ message: 'Error al agregar administrador' });
   }
 });
