@@ -29,10 +29,8 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // Base URL for backend API
     const API_BASE_URL = 'https://red-de-empleo-production.up.railway.app/api/admin';
 
-    // Funciones para obtener datos desde el backend con prefijo /api/admin
     async function fetchUsers() {
         try {
             const response = await fetch(`${API_BASE_URL}/users`, {
@@ -66,7 +64,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // Funciones para renderizar tablas con datos reales y mapeo de campos snake_case a camelCase
     const usersTableBody = document.querySelector('#usersTable tbody');
     function renderUsersTable(usersData) {
         usersTableBody.innerHTML = '';
@@ -74,6 +71,7 @@ document.addEventListener('DOMContentLoaded', () => {
             let tipoCuenta = 'Usuario';
             if (user.id_rol === 1) tipoCuenta = 'Empresa';
             else if (user.id_rol === 3) tipoCuenta = 'Admin';
+
             const tr = document.createElement('tr');
             tr.innerHTML = `
                 <td>${user.id}</td>
@@ -113,7 +111,6 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // Event delegation para botones editar y eliminar usuarios
     usersTableBody.addEventListener('click', (e) => {
         if (e.target.classList.contains('editUserBtn')) {
             const userId = e.target.getAttribute('data-id');
@@ -124,7 +121,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    // Funciones editUser y deleteUser actualizadas para trabajar con datos reales
     async function editUser(id) {
         try {
             const response = await fetch(`${API_BASE_URL}/users/${id}`);
@@ -132,8 +128,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const user = await response.json();
             document.getElementById('userId').value = user.id;
             document.getElementById('nombre').value = user.nombre;
-            document.getElementById('correo').value = user.correo || '';
-            document.getElementById('id_rol').value = user.id_rol || '';
+            document.getElementById('email').value = user.email;
             document.getElementById('esEmpresa').value = user.es_empresa ? '1' : '0';
             document.getElementById('userFormSection').style.display = 'block';
             showSection(usersSection);
@@ -155,17 +150,15 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // Manejo del formulario de usuario
     const userForm = document.getElementById('userForm');
     userForm.addEventListener('submit', async (e) => {
         e.preventDefault();
         const id = parseInt(document.getElementById('userId').value);
         const nombre = document.getElementById('nombre').value;
-        const correo = document.getElementById('correo').value;
-        const id_rol = parseInt(document.getElementById('id_rol').value);
+        const email = document.getElementById('email').value;
         const esEmpresa = document.getElementById('esEmpresa').value === '1';
 
-        const userData = { nombre, correo, id_rol, esEmpresa };
+        const userData = { nombre, email, esEmpresa };
 
         try {
             let response;
@@ -191,12 +184,10 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    // Cancelar formulario
     document.getElementById('btnCancel').addEventListener('click', () => {
         document.getElementById('userFormSection').style.display = 'none';
     });
 
-    // Ocultar botones de agregar si existen
     ['btnAddUser', 'btnAddOffer', 'btnAddReport', 'btnAddMetric'].forEach(id => {
         const btn = document.getElementById(id);
         if (btn) {
@@ -209,15 +200,79 @@ document.addEventListener('DOMContentLoaded', () => {
         showSection(dashboardSection);
     });
 
-    usersLink.addEventListener('click', (e) => {
+    const administradoresLink = document.getElementById('administradoresLink');
+    const administradoresSection = document.getElementById('administradoresSection');
+    const administradoresTableBody = document.querySelector('#administradoresTable tbody');
+    const btnAddAdministrador = document.getElementById('btnAddAdministrador');
+    const administradorFormSection = document.getElementById('administradorFormSection');
+    const administradorForm = document.getElementById('administradorForm');
+    const btnCancelAdministrador = document.getElementById('btnCancelAdministrador');
+
+    administradoresLink.addEventListener('click', (e) => {
         e.preventDefault();
-        showSection(usersSection);
+        showSection(administradoresSection);
+        fetchAdministradores();
     });
 
-    offersLink.addEventListener('click', (e) => {
-        e.preventDefault();
-        showSection(offersSection);
+    btnAddAdministrador.addEventListener('click', () => {
+        administradorFormSection.style.display = 'block';
+        btnAddAdministrador.style.display = 'none';
     });
 
-    showSection(dashboardSection);
+    btnCancelAdministrador.addEventListener('click', () => {
+        administradorFormSection.style.display = 'none';
+        btnAddAdministrador.style.display = 'block';
+        administradorForm.reset();
+    });
+
+    async function fetchAdministradores() {
+        try {
+            const response = await fetch(`${API_BASE_URL}/administradores`, {
+                method: 'GET',
+                credentials: 'include'
+            });
+            if (!response.ok) throw new Error('Error al obtener administradores');
+            const administradoresData = await response.json();
+            renderAdministradoresTable(administradoresData);
+        } catch (error) {
+            console.error(error);
+            alert('No se pudieron cargar los administradores');
+        }
+    }
+
+    function renderAdministradoresTable(administradoresData) {
+        administradoresTableBody.innerHTML = '';
+        administradoresData.forEach(admin => {
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+                <td>${admin.id}</td>
+                <td>${admin.nombre}</td>
+                <td>${admin.correo}</td>
+                <td>${admin.permisos || ''}</td>
+            `;
+            administradoresTableBody.appendChild(tr);
+        });
+    }
+
+    administradorForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const id_usuario = parseInt(document.getElementById('id_usuario').value);
+        const permisos = document.getElementById('permisos').value;
+
+        try {
+            const response = await fetch(`${API_BASE_URL}/administradores`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ id_usuario, permisos })
+            });
+            if (!response.ok) throw new Error('Error al asignar administrador');
+            fetchAdministradores();
+            administradorFormSection.style.display = 'none';
+            btnAddAdministrador.style.display = 'block';
+            administradorForm.reset();
+        } catch (error) {
+            console.error(error);
+            alert('No se pudo asignar el administrador');
+        }
+    });
 });
