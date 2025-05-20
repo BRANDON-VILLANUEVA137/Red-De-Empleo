@@ -2,44 +2,70 @@ document.addEventListener('DOMContentLoaded', () => {
     const dashboardLink = document.getElementById('dashboardLink');
     const usersLink = document.getElementById('usersLink');
     const offersLink = document.getElementById('offersLink');
-    const reportsLink = document.getElementById('reportsLink');
-    const metricsLink = document.getElementById('metricsLink');
 
     const dashboardSection = document.getElementById('dashboardSection');
     const usersSection = document.getElementById('usersSection');
     const offersSection = document.getElementById('offersSection');
-    const reportsSection = document.getElementById('reportsSection');
-    const metricsSection = document.getElementById('metricsSection');
 
     function showSection(sectionToShow) {
         dashboardSection.style.display = 'none';
         usersSection.style.display = 'none';
         offersSection.style.display = 'none';
-        reportsSection.style.display = 'none';
-        metricsSection.style.display = 'none';
 
         sectionToShow.style.display = 'block';
 
         dashboardLink.classList.remove('active');
         usersLink.classList.remove('active');
         offersLink.classList.remove('active');
-        reportsLink.classList.remove('active');
-        metricsLink.classList.remove('active');
 
         if (sectionToShow === dashboardSection) {
             dashboardLink.classList.add('active');
+            fetchDashboardCounts();
         } else if (sectionToShow === usersSection) {
             usersLink.classList.add('active');
             fetchUsers();
         } else if (sectionToShow === offersSection) {
             offersLink.classList.add('active');
             fetchOffers();
-        } else if (sectionToShow === reportsSection) {
-            reportsLink.classList.add('active');
-            fetchReports();
-        } else if (sectionToShow === metricsSection) {
-            metricsLink.classList.add('active');
-            fetchMetrics();
+        }
+    }
+
+    async function fetchDashboardCounts() {
+        try {
+            console.log('Fetching dashboard counts...');
+            const usersResponse = await fetch(`${API_BASE_URL}/users/max-id`, {
+                method: 'GET',
+                credentials: 'include'
+            });
+            console.log('Users max ID response status:', usersResponse.status);
+            const offersResponse = await fetch(`${API_BASE_URL}/offers/max-id`, {
+                method: 'GET',
+                credentials: 'include'
+            });
+            console.log('Offers max ID response status:', offersResponse.status);
+
+            if (!usersResponse.ok || !offersResponse.ok) {
+                throw new Error('Error al obtener datos para el dashboard');
+            }
+
+            const usersData = await usersResponse.json();
+            const offersData = await offersResponse.json();
+
+            console.log('Users max ID data:', usersData);
+            console.log('Offers max ID data:', offersData);
+
+            const maxUserId = usersData.maxId || 0;
+            const maxOfferId = offersData.maxId || 0;
+
+            document.getElementById('totalUsers').textContent = maxUserId;
+            document.getElementById('totalOffers').textContent = maxOfferId;
+            // Since reports section is removed, set totalReports to 0 or remove
+            document.getElementById('totalReports').textContent = '0';
+        } catch (error) {
+            console.error(error);
+            document.getElementById('totalUsers').textContent = '--';
+            document.getElementById('totalOffers').textContent = '--';
+            document.getElementById('totalReports').textContent = '--';
         }
     }
 
@@ -48,82 +74,41 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Funciones para obtener datos desde el backend con prefijo /api/admin
     async function fetchUsers() {
-    try {
-        const response = await fetch(`${API_BASE_URL}/users`, {
-            method: 'GET',
-            credentials: 'include' // ✅ Aquí correctamente colocado
-        });
+        try {
+            const response = await fetch(`${API_BASE_URL}/users`, {
+                method: 'GET',
+                credentials: 'include'
+            });
 
-        if (!response.ok) throw new Error('Error al obtener usuarios');
-        const usersData = await response.json();
-        renderUsersTable(usersData);
-        
-    } catch (error) {
-        console.error(error);
-        alert('No se pudieron cargar los usuarios');
+            if (!response.ok) throw new Error('Error al obtener usuarios');
+            const usersData = await response.json();
+            renderUsersTable(usersData);
+
+            return usersData.length;
+        } catch (error) {
+            console.error(error);
+            alert('No se pudieron cargar los usuarios');
+            return 0;
+        }
     }
-}
 
-   async function fetchOffers() {
-    try {
-        const response = await fetch(`${API_BASE_URL}/offers`, {
-            method: 'GET',
-            credentials: 'include'
-        });
-
-        if (!response.ok) throw new Error('Error al obtener ofertas');
-        const offersData = await response.json();
-        renderOffersTable(offersData);
-    } catch (error) {
-        console.error(error);
-        alert('No se pudieron cargar las ofertas');
-    }
-}
-
-async function fetchReports() {
-    try {
-        const response = await fetch(`${API_BASE_URL}/reports`, {
-            method: 'GET',
-            credentials: 'include'
-        });
-
-        if (!response.ok) throw new Error('Error al obtener reportes');
-        const reportsData = await response.json();
-        renderReportsTable(reportsData);
-    } catch (error) {
-        console.error(error);
-        alert('No se pudieron cargar los reportes');
-    }
-}
-
-async function fetchMetrics() {
-    try {
-        const response = await fetch(`${API_BASE_URL}/metrics`, {
-            method: 'GET',
-            credentials: 'include'
-        });
-
-        if (!response.ok) throw new Error('Error al obtener métricas');
-        const metricsData = await response.json();
-        renderMetricsTable(metricsData);
-    } catch (error) {
-        console.error(error);
-        alert('No se pudieron cargar las métricas');
-    }
-}
 
     // Funciones para renderizar tablas con datos reales y mapeo de campos snake_case a camelCase
     const usersTableBody = document.querySelector('#usersTable tbody');
     function renderUsersTable(usersData) {
         usersTableBody.innerHTML = '';
         usersData.forEach(user => {
-            const esEmpresa = user.es_empresa || user.esEmpresa;
+            let tipoCuenta = 'Usuario';
+            if (user.id_rol === 1) tipoCuenta = 'Empresa';
+            else if (user.id_rol === 3) tipoCuenta = 'Admin';
             const tr = document.createElement('tr');
             tr.innerHTML = `
                 <td>${user.id}</td>
                 <td>${user.nombre}</td>
-                <td>${user.email}</td>
-                <td>${esEmpresa ? 'Sí' : 'No'}</td>
+                <td>${user.correo || user.email || ''}</td>
+                <td>${tipoCuenta}</td>
+                <td>${user.id_rol === 1 ? 'Sí' : 'No'}</td>
+                <td>${user.id_rol}</td>
                 <td>
                     <button class="editUserBtn" data-id="${user.id}">Editar</button>
                     <button class="deleteUserBtn" data-id="${user.id}">Eliminar</button>
@@ -134,17 +119,30 @@ async function fetchMetrics() {
     }
 
     const offersTableBody = document.querySelector('#offersTable tbody');
-    function renderOffersTable(offersData) {
+    async function getEmpresaNombre(empresaId) {
+        try {
+            const response = await fetch(`${API_BASE_URL}/empleados/${empresaId}`);
+            if (!response.ok) throw new Error('Error al obtener empresa');
+            const empresa = await response.json();
+            return empresa.nombre || empresa.name || 'Desconocida';
+        } catch (error) {
+            console.error(error);
+            return 'Desconocida';
+        }
+    }
+
+    async function renderOffersTable(offersData) {
         offersTableBody.innerHTML = '';
-        offersData.forEach(offer => {
+        for (const offer of offersData) {
             const empresaId = offer.empresa_id || offer.empresaId;
             const fechaPublicacion = offer.fecha_publicacion || offer.fechaPublicacion;
+            const empresaNombre = await getEmpresaNombre(empresaId);
             const tr = document.createElement('tr');
             tr.innerHTML = `
                 <td>${offer.id}</td>
                 <td>${offer.titulo}</td>
                 <td>${offer.descripcion}</td>
-                <td>${empresaId}</td>
+                <td>${empresaNombre}</td>
                 <td>${fechaPublicacion}</td>
                 <td>
                     <button class="editOfferBtn" data-id="${offer.id}">Editar</button>
@@ -152,47 +150,7 @@ async function fetchMetrics() {
                 </td>
             `;
             offersTableBody.appendChild(tr);
-        });
-    }
-
-    const reportsTableBody = document.querySelector('#reportsTable tbody');
-    function renderReportsTable(reportsData) {
-        reportsTableBody.innerHTML = '';
-        reportsData.forEach(report => {
-            const fechaReporte = report.fecha_reporte || report.fechaReporte;
-            const tr = document.createElement('tr');
-            tr.innerHTML = `
-                <td>${report.id}</td>
-                <td>${report.titulo}</td>
-                <td>${report.descripcion}</td>
-                <td>${fechaReporte}</td>
-                <td>
-                    <button class="editReportBtn" data-id="${report.id}">Editar</button>
-                    <button class="deleteReportBtn" data-id="${report.id}">Eliminar</button>
-                </td>
-            `;
-            reportsTableBody.appendChild(tr);
-        });
-    }
-
-    const metricsTableBody = document.querySelector('#metricsTable tbody');
-    function renderMetricsTable(metricsData) {
-        metricsTableBody.innerHTML = '';
-        metricsData.forEach(metric => {
-            const fechaMedicion = metric.fecha_medicion || metric.fechaMedicion;
-            const tr = document.createElement('tr');
-            tr.innerHTML = `
-                <td>${metric.id}</td>
-                <td>${metric.nombre}</td>
-                <td>${metric.valor}</td>
-                <td>${fechaMedicion}</td>
-                <td>
-                    <button class="editMetricBtn" data-id="${metric.id}">Editar</button>
-                    <button class="deleteMetricBtn" data-id="${metric.id}">Eliminar</button>
-                </td>
-            `;
-            metricsTableBody.appendChild(tr);
-        });
+        }
     }
 
     // Event delegation para botones editar y eliminar usuarios
@@ -206,6 +164,90 @@ async function fetchMetrics() {
         }
     });
 
+    // Event delegation para botones editar y eliminar ofertas
+    offersTableBody.addEventListener('click', (e) => {
+        if (e.target.classList.contains('editOfferBtn')) {
+            const offerId = e.target.getAttribute('data-id');
+            editOffer(offerId);
+        } else if (e.target.classList.contains('deleteOfferBtn')) {
+            const offerId = e.target.getAttribute('data-id');
+            deleteOffer(offerId);
+        }
+    });
+
+    // Función para editar oferta
+    async function editOffer(id) {
+        try {
+            const response = await fetch(`${API_BASE_URL}/offers/${id}`);
+            if (!response.ok) throw new Error('Error al obtener oferta');
+            const offer = await response.json();
+            document.getElementById('offerId').value = offer.id;
+            document.getElementById('titulo').value = offer.titulo;
+            document.getElementById('descripcion').value = offer.descripcion;
+            document.getElementById('empresaId').value = offer.empresa_id || offer.empresaId;
+            document.getElementById('fechaPublicacion').value = offer.fecha_publicacion || offer.fechaPublicacion;
+            document.getElementById('offerFormSection').style.display = 'block';
+            showSection(offersSection);
+        } catch (error) {
+            console.error(error);
+            alert('No se pudo cargar la oferta para editar');
+        }
+    }
+
+    // Función para eliminar oferta
+    async function deleteOffer(id) {
+        if (!confirm('¿Estás seguro de eliminar esta oferta?')) return;
+        try {
+            const response = await fetch(`${API_BASE_URL}/offers/${id}`, { method: 'DELETE' });
+            if (!response.ok) throw new Error('Error al eliminar oferta');
+            fetchOffers();
+        } catch (error) {
+            console.error(error);
+            alert('No se pudo eliminar la oferta');
+        }
+    }
+
+    // Manejo del formulario de oferta
+    const offerForm = document.getElementById('offerForm');
+    offerForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const id = parseInt(document.getElementById('offerId').value);
+        const titulo = document.getElementById('titulo').value;
+        const descripcion = document.getElementById('descripcion').value;
+        const empresaId = parseInt(document.getElementById('empresaId').value);
+        const fechaPublicacion = document.getElementById('fechaPublicacion').value;
+
+        const offerData = { titulo, descripcion, empresaId, fechaPublicacion };
+
+        try {
+            let response;
+            if (id) {
+                response = await fetch(`${API_BASE_URL}/offers/${id}`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(offerData)
+                });
+            } else {
+                response = await fetch(`${API_BASE_URL}/offers`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(offerData)
+                });
+            }
+            if (!response.ok) throw new Error('Error al guardar oferta');
+            fetchOffers();
+            document.getElementById('offerFormSection').style.display = 'none';
+        } catch (error) {
+            console.error(error);
+            alert('No se pudo guardar la oferta');
+        }
+    });
+
+    // Cancelar formulario de oferta
+    document.getElementById('btnCancel').addEventListener('click', () => {
+        document.getElementById('offerFormSection').style.display = 'none';
+    });
+
     // Funciones editUser y deleteUser actualizadas para trabajar con datos reales
     async function editUser(id) {
         try {
@@ -214,7 +256,8 @@ async function fetchMetrics() {
             const user = await response.json();
             document.getElementById('userId').value = user.id;
             document.getElementById('nombre').value = user.nombre;
-            document.getElementById('email').value = user.email;
+            document.getElementById('correo').value = user.correo || '';
+            document.getElementById('id_rol').value = user.id_rol || '';
             document.getElementById('esEmpresa').value = user.es_empresa ? '1' : '0';
             document.getElementById('userFormSection').style.display = 'block';
             showSection(usersSection);
@@ -242,10 +285,11 @@ async function fetchMetrics() {
         e.preventDefault();
         const id = parseInt(document.getElementById('userId').value);
         const nombre = document.getElementById('nombre').value;
-        const email = document.getElementById('email').value;
+        const correo = document.getElementById('correo').value;
+        const id_rol = parseInt(document.getElementById('id_rol').value);
         const esEmpresa = document.getElementById('esEmpresa').value === '1';
 
-        const userData = { nombre, email, esEmpresa };
+        const userData = { nombre, correo, id_rol, esEmpresa };
 
         try {
             let response;
@@ -289,84 +333,6 @@ async function fetchMetrics() {
         showSection(dashboardSection);
     });
 
-    // Administradores section elements
-    const administradoresLink = document.getElementById('administradoresLink');
-    const administradoresSection = document.getElementById('administradoresSection');
-    const administradoresTableBody = document.querySelector('#administradoresTable tbody');
-    const btnAddAdministrador = document.getElementById('btnAddAdministrador');
-    const administradorFormSection = document.getElementById('administradorFormSection');
-    const administradorForm = document.getElementById('administradorForm');
-    const btnCancelAdministrador = document.getElementById('btnCancelAdministrador');
-
-    administradoresLink.addEventListener('click', (e) => {
-        e.preventDefault();
-        showSection(administradoresSection);
-        fetchAdministradores();
-    });
-
-    btnAddAdministrador.addEventListener('click', () => {
-        administradorFormSection.style.display = 'block';
-        btnAddAdministrador.style.display = 'none';
-    });
-
-    btnCancelAdministrador.addEventListener('click', () => {
-        administradorFormSection.style.display = 'none';
-        btnAddAdministrador.style.display = 'block';
-        administradorForm.reset();
-    });
-
-    async function fetchAdministradores() {
-        try {
-            const response = await fetch(`${API_BASE_URL}/administradores`, {
-                method: 'GET',
-                credentials: 'include'
-            });
-            if (!response.ok) throw new Error('Error al obtener administradores');
-            const administradoresData = await response.json();
-            renderAdministradoresTable(administradoresData);
-        } catch (error) {
-            console.error(error);
-            alert('No se pudieron cargar los administradores');
-        }
-    }
-
-    function renderAdministradoresTable(administradoresData) {
-        administradoresTableBody.innerHTML = '';
-        administradoresData.forEach(admin => {
-            const tr = document.createElement('tr');
-            tr.innerHTML = `
-                <td>${admin.id}</td>
-                <td>${admin.nombre}</td>
-                <td>${admin.correo}</td>
-                <td>${admin.permisos || ''}</td>
-            `;
-            administradoresTableBody.appendChild(tr);
-        });
-    }
-
-    administradorForm.addEventListener('submit', async (e) => {
-        e.preventDefault();
-        const id_usuario = parseInt(document.getElementById('id_usuario').value);
-        const permisos = document.getElementById('permisos').value;
-
-        try {
-            const response = await fetch(`${API_BASE_URL}/administradores`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                credentials: 'include',
-                body: JSON.stringify({ id_usuario, permisos })
-            });
-            if (!response.ok) throw new Error('Error al agregar administrador');
-            administradorFormSection.style.display = 'none';
-            btnAddAdministrador.style.display = 'block';
-            administradorForm.reset();
-            fetchAdministradores();
-        } catch (error) {
-            console.error(error);
-            alert('No se pudo agregar el administrador');
-        }
-    });
-
     usersLink.addEventListener('click', (e) => {
         e.preventDefault();
         showSection(usersSection);
@@ -375,16 +341,6 @@ async function fetchMetrics() {
     offersLink.addEventListener('click', (e) => {
         e.preventDefault();
         showSection(offersSection);
-    });
-
-    reportsLink.addEventListener('click', (e) => {
-        e.preventDefault();
-        showSection(reportsSection);
-    });
-
-    metricsLink.addEventListener('click', (e) => {
-        e.preventDefault();
-        showSection(metricsSection);
     });
 
     showSection(dashboardSection);

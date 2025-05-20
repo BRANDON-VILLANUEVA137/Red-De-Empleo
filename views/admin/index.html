@@ -17,9 +17,9 @@
                     <li><a href="#" id="dashboardLink" class="active">Dashboard</a></li>
                     <li><a href="#" id="usersLink">Usuarios</a></li>
                     <li><a href="#" id="offersLink">Ofertas</a></li>
-                    <li><a href="#" id="reportsLink">Reportes</a></li>
-                    <li><a href="#" id="metricsLink">Métricas</a></li>
-                    <li><a href="#" id="administradoresLink">Administradores</a></li>
+                    <!-- <li><a href="#" id="reportsLink">Reportes</a></li> -->
+                    <!-- <li><a href="#" id="metricsLink">Métricas</a></li> -->
+                    <!-- <li><a href="#" id="administradoresLink">Administradores</a></li>-->
                 </ul>
             </nav>
         </aside>
@@ -36,10 +36,8 @@
                         <h2>Información General</h2>
                         <p>Bienvenido al panel de administración. Aquí puedes gestionar usuarios, ofertas, reportes y métricas.</p>
                         <ul>
-                            <li>Total de usuarios registrados: <strong>--</strong></li>
-                            <li>Total de ofertas publicadas: <strong>--</strong></li>
-                            <li>Total de reportes generados: <strong>--</strong></li>
-                            <li>Total de métricas registradas: <strong>--</strong></li>
+                            <li>Total de usuarios registrados: <strong id="totalUsers">--</strong></li>
+                            <li>Total de ofertas publicadas: <strong id="totalOffers">--</strong></li>
                         </ul>
                     </div>
                     <div class="card">
@@ -62,7 +60,9 @@
                                     <th>ID</th>
                                     <th>Nombre</th>
                                     <th>Email</th>
+                                    <th>tipo de usuario</th>
                                     <th>Es Empresa</th>
+                                    <th>rol</th>
                                     <th>Acciones</th>
                                 </tr>
                             </thead>
@@ -77,8 +77,14 @@
                             <input type="hidden" id="userId" />
                             <label for="nombre">Nombre:</label>
                             <input type="text" id="nombre" name="nombre" required />
-                            <label for="email">Email:</label>
-                            <input type="email" id="email" name="email" required />
+                            <label for="correo">Email:</label>
+                            <input type="email" id="correo" name="correo" required />
+                            <label for="id_rol">Rol:</label>
+                            <select id="id_rol" name="id_rol" required>
+                                <option value="1">Empresa</option>
+                                <option value="2">Usuario</option>
+                                <option value="3">Admin</option>
+                            </select>
                             <label for="esEmpresa">Es Empresa:</label>
                             <select id="esEmpresa" name="esEmpresa" required>
                                 <option value="0">No</option>
@@ -133,7 +139,6 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                <!-- Ofertas cargadas dinámicamente con botones Editar y Eliminar -->
                             </tbody>
                         </table>
                     </div>
@@ -154,24 +159,6 @@
                         </form>
                     </div>
                 </section>
-                <section class="dashboard-cards" id="reportsSection" style="display:none;">
-                    <div class="card">
-                        <!-- Botón "Agregar Reporte" eliminado según solicitud -->
-                        <table id="reportsTable" border="1">
-                            <thead>
-                                <tr>
-                                    <th>ID</th>
-                                    <th>Título</th>
-                                    <th>Descripción</th>
-                                    <th>Fecha Reporte</th>
-                                    <th>Acciones</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <!-- Reportes cargados dinámicamente con botones Editar y Eliminar -->
-                            </tbody>
-                        </table>
-                    </div>
                     <div class="card" id="reportFormSection" style="display:none;">
                         <h2 id="formTitle">Editar Reporte</h2>
                         <form id="reportForm">
@@ -185,44 +172,47 @@
                             <button type="submit">Guardar</button>
                             <button type="button" id="btnCancel">Cancelar</button>
                         </form>
-                    </div>
-                </section>
-                <section class="dashboard-cards" id="metricsSection" style="display:none;">
-                    <div class="card">
-                        <!-- Botón "Agregar Métrica" eliminado según solicitud -->
-                        <table id="metricsTable" border="1">
-                            <thead>
-                                <tr>
-                                    <th>ID</th>
-                                    <th>Nombre</th>
-                                    <th>Valor</th>
-                                    <th>Fecha Medición</th>
-                                    <th>Acciones</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <!-- Métricas cargadas dinámicamente con botones Editar y Eliminar -->
-                            </tbody>
-                        </table>
-                    </div>
-                    <div class="card" id="metricFormSection" style="display:none;">
-                        <h2 id="formTitle">Editar Métrica</h2>
-                        <form id="metricForm">
-                            <input type="hidden" id="metricId" />
-                            <label for="nombre">Nombre:</label>
-                            <input type="text" id="nombre" name="nombre" required />
-                            <label for="valor">Valor:</label>
-                            <input type="number" id="valor" name="valor" step="any" required />
-                            <label for="fechaMedicion">Fecha Medición:</label>
-                            <input type="date" id="fechaMedicion" name="fechaMedicion" required />
-                            <button type="submit">Guardar</button>
-                            <button type="button" id="btnCancel">Cancelar</button>
-                        </form>
-                    </div>
-                </section>
             </main>
         </div>
     </div>
     <script src="../../Public/admin/admin.js"></script>
+<!-- Code injected by live-server -->
+<script>
+	// <![CDATA[  <-- For SVG support
+	if ('WebSocket' in window) {
+		(function () {
+			function refreshCSS() {
+				var sheets = [].slice.call(document.getElementsByTagName("link"));
+				var head = document.getElementsByTagName("head")[0];
+				for (var i = 0; i < sheets.length; ++i) {
+					var elem = sheets[i];
+					var parent = elem.parentElement || head;
+					parent.removeChild(elem);
+					var rel = elem.rel;
+					if (elem.href && typeof rel != "string" || rel.length == 0 || rel.toLowerCase() == "stylesheet") {
+						var url = elem.href.replace(/(&|\?)_cacheOverride=\d+/, '');
+						elem.href = url + (url.indexOf('?') >= 0 ? '&' : '?') + '_cacheOverride=' + (new Date().valueOf());
+					}
+					parent.appendChild(elem);
+				}
+			}
+			var protocol = window.location.protocol === 'http:' ? 'ws://' : 'wss://';
+			var address = protocol + window.location.host + window.location.pathname + '/ws';
+			var socket = new WebSocket(address);
+			socket.onmessage = function (msg) {
+				if (msg.data == 'reload') window.location.reload();
+				else if (msg.data == 'refreshcss') refreshCSS();
+			};
+			if (sessionStorage && !sessionStorage.getItem('IsThisFirstTime_Log_From_LiveServer')) {
+				console.log('Live reload enabled.');
+				sessionStorage.setItem('IsThisFirstTime_Log_From_LiveServer', true);
+			}
+		})();
+	}
+	else {
+		console.error('Upgrade your browser. This Browser is NOT supported WebSocket for Live-Reloading.');
+	}
+	// ]]>
+</script>
 </body>
 </html>
