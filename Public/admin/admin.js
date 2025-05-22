@@ -85,7 +85,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     async function fetchEmpleos() {
-    const empleosData = await fetchData('empleos'); // Asegúrate de que el endpoint sea '/empleos'
+    const empleosData = await fetchData('offers'); // Asegúrate de que el endpoint sea '/empleos'
     if (empleosData) renderEmpleosTable(empleosData);
 }
 
