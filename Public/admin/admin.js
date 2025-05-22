@@ -149,15 +149,12 @@ document.addEventListener('DOMContentLoaded', () => {
     async function renderOffersTable(offersData) {
         offersTableBody.innerHTML = '';
         for (const offer of offersData) {
-            const empresaId = offer.empresa_id || offer.empresaId;
             const fechaPublicacion = offer.fecha_publicacion || offer.fechaPublicacion;
-            const empresaNombre = await getEmpresaNombre(empresaId);
             const tr = document.createElement('tr');
             tr.innerHTML = `
                 <td>${offer.id}</td>
                 <td>${offer.titulo}</td>
                 <td>${offer.descripcion}</td>
-                <td>${empresaNombre}</td>
                 <td>${fechaPublicacion}</td>
                 <td>
                     <button class="editOfferBtn" data-id="${offer.id}">Editar</button>
@@ -229,10 +226,9 @@ document.addEventListener('DOMContentLoaded', () => {
         const id = parseInt(document.getElementById('offerId').value);
         const titulo = document.getElementById('titulo').value;
         const descripcion = document.getElementById('descripcion').value;
-        const empresaId = parseInt(document.getElementById('empresaId').value);
         const fechaPublicacion = document.getElementById('fechaPublicacion').value;
 
-        const offerData = { titulo, descripcion, empresaId, fechaPublicacion };
+        const offerData = { titulo, descripcion, fechaPublicacion };
 
         try {
             let response;

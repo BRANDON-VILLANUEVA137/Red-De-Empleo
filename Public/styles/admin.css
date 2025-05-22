@@ -172,3 +172,8 @@
         gap: 15px;
     }
 }
+
+/* Remove border from Empresa ID column cells in offers table */
+#offersTable td:nth-child(4) {
+    border: none !important;
+}
