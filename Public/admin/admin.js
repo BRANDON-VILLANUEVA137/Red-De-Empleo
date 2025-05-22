@@ -41,6 +41,8 @@ document.addEventListener('DOMContentLoaded', () => {
         // Mostrar sección seleccionada
         sectionToShow.style.display = 'block';
 
+        const fetchOffers = fetchEmpleos;
+
         // Activar link correspondiente y cargar datos si es necesario
         for (const [key, section] of Object.entries(sections)) {
             if (section === sectionToShow) {
