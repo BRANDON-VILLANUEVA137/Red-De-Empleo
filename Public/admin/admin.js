@@ -41,6 +41,8 @@ document.addEventListener('DOMContentLoaded', () => {
         // Mostrar sección seleccionada
         sectionToShow.style.display = 'block';
 
+        const fetchOffers = fetchEmpleos;
+
         // Activar link correspondiente y cargar datos si es necesario
         for (const [key, section] of Object.entries(sections)) {
             if (section === sectionToShow) {
@@ -83,7 +85,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     async function fetchEmpleos() {
-    const empleosData = await fetchData('empleos'); // Asegúrate de que el endpoint sea '/empleos'
+    const empleosData = await fetchData('offers'); // Asegúrate de que el endpoint sea '/empleos'
     if (empleosData) renderEmpleosTable(empleosData);
 }
 
