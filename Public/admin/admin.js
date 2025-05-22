@@ -20,12 +20,52 @@ document.addEventListener('DOMContentLoaded', () => {
 
         if (sectionToShow === dashboardSection) {
             dashboardLink.classList.add('active');
+            fetchDashboardCounts();
         } else if (sectionToShow === usersSection) {
             usersLink.classList.add('active');
             fetchUsers();
         } else if (sectionToShow === offersSection) {
             offersLink.classList.add('active');
             fetchOffers();
+        }
+    }
+
+    async function fetchDashboardCounts() {
+        try {
+            console.log('Fetching dashboard counts...');
+            const usersResponse = await fetch(`${API_BASE_URL}/users/max-id`, {
+                method: 'GET',
+                credentials: 'include'
+            });
+            console.log('Users max ID response status:', usersResponse.status);
+            const offersResponse = await fetch(`${API_BASE_URL}/offers/max-id`, {
+                method: 'GET',
+                credentials: 'include'
+            });
+            console.log('Offers max ID response status:', offersResponse.status);
+
+            if (!usersResponse.ok || !offersResponse.ok) {
+                throw new Error('Error al obtener datos para el dashboard');
+            }
+
+            const usersData = await usersResponse.json();
+            const offersData = await offersResponse.json();
+
+            console.log('Users max ID data:', usersData);
+            console.log('Offers max ID data:', offersData);
+
+            const maxUserId = usersData.maxId || 0;
+            const maxOfferId = offersData.maxId || 0;
+
+            document.getElementById('totalUsers').textContent = maxUserId;
+            document.getElementById('totalOffers').textContent = maxOfferId;
+            // Since reports section is removed, set totalReports to 0 or remove
+            document.getElementById('totalReports').textContent = '0';
+        } catch (error) {
+            console.error(error);
+            document.getElementById('totalUsers').textContent = '--';
+            document.getElementById('totalOffers').textContent = '--';
+            document.getElementById('totalReports').textContent = '--';
         }
     }
 
@@ -44,9 +84,11 @@ document.addEventListener('DOMContentLoaded', () => {
             const usersData = await response.json();
             renderUsersTable(usersData);
 
+            return usersData.length;
         } catch (error) {
             console.error(error);
             alert('No se pudieron cargar los usuarios');
+            return 0;
         }
     }
 
@@ -92,17 +134,30 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     const offersTableBody = document.querySelector('#offersTable tbody');
-    function renderOffersTable(offersData) {
+    async function getEmpresaNombre(empresaId) {
+        try {
+            const response = await fetch(`${API_BASE_URL}/empleados/${empresaId}`);
+            if (!response.ok) throw new Error('Error al obtener empresa');
+            const empresa = await response.json();
+            return empresa.nombre || empresa.name || 'Desconocida';
+        } catch (error) {
+            console.error(error);
+            return 'Desconocida';
+        }
+    }
+
+    async function renderOffersTable(offersData) {
         offersTableBody.innerHTML = '';
-        offersData.forEach(offer => {
+        for (const offer of offersData) {
             const empresaId = offer.empresa_id || offer.empresaId;
             const fechaPublicacion = offer.fecha_publicacion || offer.fechaPublicacion;
+            const empresaNombre = await getEmpresaNombre(empresaId);
             const tr = document.createElement('tr');
             tr.innerHTML = `
                 <td>${offer.id}</td>
                 <td>${offer.titulo}</td>
                 <td>${offer.descripcion}</td>
-                <td>${empresaId}</td>
+                <td>${empresaNombre}</td>
                 <td>${fechaPublicacion}</td>
                 <td>
                     <button class="editOfferBtn" data-id="${offer.id}">Editar</button>
@@ -110,7 +165,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 </td>
             `;
             offersTableBody.appendChild(tr);
-        });
+        }
     }
 
     // Event delegation para botones editar y eliminar usuarios
@@ -122,6 +177,91 @@ document.addEventListener('DOMContentLoaded', () => {
             const userId = e.target.getAttribute('data-id');
             deleteUser(userId);
         }
+    });
+
+    // Event delegation para botones editar y eliminar ofertas
+    offersTableBody.addEventListener('click', (e) => {
+        if (e.target.classList.contains('editOfferBtn')) {
+            const offerId = e.target.getAttribute('data-id');
+            editOffer(offerId);
+        } else if (e.target.classList.contains('deleteOfferBtn')) {
+            const offerId = e.target.getAttribute('data-id');
+            deleteOffer(offerId);
+        }
+    });
+
+    // Función para editar oferta
+    async function editOffer(id) {
+        try {
+            const response = await fetch(`${API_BASE_URL}/offers/${id}`);
+            if (!response.ok) throw new Error('Error al obtener oferta');
+            const offer = await response.json();
+            document.getElementById('offerId').value = offer.id;
+            document.getElementById('titulo').value = offer.titulo;
+            document.getElementById('descripcion').value = offer.descripcion;
+            document.getElementById('empresaId').value = offer.empresa_id || offer.empresaId;
+            document.getElementById('fechaPublicacion').value = offer.fecha_publicacion || offer.fechaPublicacion;
+            document.getElementById('offerFormSection').style.display = 'block';
+            showSection(offersSection);
+        } catch (error) {
+            console.error(error);
+            alert('No se pudo cargar la oferta para editar');
+        }
+    }
+
+    // Función para eliminar oferta
+    async function deleteOffer(id) {
+        if (!confirm('¿Estás seguro de eliminar esta oferta?')) return;
+        try {
+            const response = await fetch(`${API_BASE_URL}/offers/${id}`, { method: 'DELETE' });
+            if (!response.ok) throw new Error('Error al eliminar oferta');
+            fetchOffers();
+        } catch (error) {
+            console.error(error);
+            alert('No se pudo eliminar la oferta');
+        }
+    }
+
+    // Manejo del formulario de oferta
+    const offerForm = document.getElementById('offerForm');
+    offerForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const id = parseInt(document.getElementById('offerId').value);
+        const titulo = document.getElementById('titulo').value;
+        const descripcion = document.getElementById('descripcion').value;
+        const empresaId = parseInt(document.getElementById('empresaId').value);
+        const fechaPublicacion = document.getElementById('fechaPublicacion').value;
+
+        const offerData = { titulo, descripcion, empresaId, fechaPublicacion };
+
+        try {
+            let response;
+            if (id) {
+                response = await fetch(`${API_BASE_URL}/offers/${id}`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(offerData)
+                });
+            } else {
+                response = await fetch(`${API_BASE_URL}/offers`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(offerData)
+                });
+            }
+            if (!response.ok) throw new Error('Error al guardar oferta');
+            await fetchOffers();
+            renderOffersTable(await fetchOffers());
+            document.getElementById('offerFormSection').style.display = 'none';
+        } catch (error) {
+            console.error(error);
+            alert('No se pudo guardar la oferta');
+        }
+    });
+
+    // Cancelar formulario de oferta
+    document.getElementById('btnCancel').addEventListener('click', () => {
+        document.getElementById('offerFormSection').style.display = 'none';
     });
 
     // Funciones editUser y deleteUser actualizadas para trabajar con datos reales
@@ -183,7 +323,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 });
             }
             if (!response.ok) throw new Error('Error al guardar usuario');
-            fetchUsers();
+            await fetchUsers();
+            renderUsersTable(await fetchUsers());
             document.getElementById('userFormSection').style.display = 'none';
         } catch (error) {
             console.error(error);
