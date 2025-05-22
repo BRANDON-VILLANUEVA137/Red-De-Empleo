@@ -66,7 +66,7 @@ registerForm.addEventListener("submit", (event) => {
   fetch(`${API_URL}/api/register`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ nombre, correo, contrasena, id_rol: esEmpresa ? 2 : 1 }) 
+    body: JSON.stringify({ nombre, correo, contrasena, id_rol: esEmpresa ? 1 : 2 }) 
   })
     .then(res => res.json())
     .then(data => {
