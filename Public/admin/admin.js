@@ -200,34 +200,34 @@ async function deleteUser(id) {
 }
 
 // Manejo del formulario de usuario (crear / editar)
-userForm.addEventListener('submit', async (e) => {
-    e.preventDefault();
+    userForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
 
-    const id = parseInt(document.getElementById('userId').value);
-    const userData = {
-        nombre: document.getElementById('nombre').value,
-        email: document.getElementById('email').value,
-        id_rol: document.getElementById('esEmpresa').value === '1' ? 2 : 1    };
+        const id = parseInt(document.getElementById('userId').value);
+        const userData = {
+            nombre: document.getElementById('nombre').value,
+            correo: document.getElementById('email').value,
+            id_rol: document.getElementById('esEmpresa').value === '1' ? 2 : 1    };
 
-    try {
-        const response = await fetch(`${API_BASE_URL}/users${id ? `/${id}` : ''}`, {
-            method: id ? 'PUT' : 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            credentials: 'include',
-            body: JSON.stringify(userData)
-        });
+        try {
+            const response = await fetch(`${API_BASE_URL}/users${id ? `/${id}` : ''}`, {
+                method: id ? 'PUT' : 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                credentials: 'include',
+                body: JSON.stringify(userData)
+            });
 
-        if (!response.ok) throw new Error('Error al guardar el usuario');
+            if (!response.ok) throw new Error('Error al guardar el usuario');
 
-        alert(id ? 'Usuario actualizado correctamente' : 'Usuario creado exitosamente');
-        fetchUsers();
-        userFormSection.style.display = 'none';
-        userForm.reset();
-    } catch (error) {
-        console.error('Error al guardar el usuario:', error);
-        alert('No se pudo guardar el usuario');
-    }
-});
+            alert(id ? 'Usuario actualizado correctamente' : 'Usuario creado exitosamente');
+            fetchUsers();
+            userFormSection.style.display = 'none';
+            userForm.reset();
+        } catch (error) {
+            console.error('Error al guardar el usuario:', error);
+            alert('No se pudo guardar el usuario');
+        }
+    });
 
 // Botón cancelar formulario de usuario
 document.getElementById('btnCancel').addEventListener('click', () => {
