@@ -126,12 +126,11 @@ document.addEventListener('DOMContentLoaded', () => {
             <td>${empleo.descripcion || ''}</td>
             <td>${empleo.ubicacion || '-'}</td>
             <td>${empleo.requisitos || '-'}</td>
-            <td>${empleo.id_empleador}</td>
-            <td>${empleo.categoria_id || '-'}</td>
             <td>${fechaPublicacion}</td>
             <td>
-                <button class="editEmpleoBtn" data-id="${empleo.id}">Editar</button>
-                <button class="deleteEmpleoBtn" data-id="${empleo.id}">Eliminar</button>
+                <button class="editOfferBtn" data-id="${empleo.id}">Editar</button>
+                <button class="deleteOfferBtn" data-id="${empleo.id}">Eliminar</button>
+
             </td>
         `;
         tableBodies.offers.appendChild(tr);
@@ -159,108 +158,178 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // Configurar event delegation para cada tabla
-    setupTableEventDelegation(tableBodies.users, 'editUserBtn', 'deleteUserBtn', editUser, deleteUser);
-    setupTableEventDelegation(tableBodies.offers, 'editOfferBtn', 'deleteOfferBtn', editOffer, deleteOffer);
+    // Delegación de eventos para tablas
+setupTableEventDelegation(tableBodies.users, 'editUserBtn', 'deleteUserBtn', editUser, deleteUser);
+setupTableEventDelegation(tableBodies.offers, 'editOfferBtn', 'deleteOfferBtn', editOffer, deleteOffer);
 
-    // Funciones para CRUD de usuarios
-    async function editUser(id) {
-        try {
-            const user = await fetchData(`users/${id}`);
-            if (user) {
-                document.getElementById('userId').value = user.id;
-                document.getElementById('nombre').value = user.nombre;
-                document.getElementById('email').value = user.correo || user.email;
-                document.getElementById('esEmpresa').value = user.es_empresa ? '1' : '0';
-                userFormSection.style.display = 'block';
-                showSection(sections.users);
-            }
-        } catch (error) {
-            console.error(error);
-            alert('No se pudo cargar el usuario para editar');
+// ==================== CRUD USUARIOS ====================
+
+// Editar usuario
+async function editUser(id) {
+    try {
+        const user = await fetchData(`users/${id}`);
+        if (user) {
+            document.getElementById('userId').value = user.id;
+            document.getElementById('nombre').value = user.nombre;
+            document.getElementById('email').value = user.correo || user.email;
+            document.getElementById('esEmpresa').value = user.es_empresa ? '1' : '0';
+            userFormSection.style.display = 'block';
+            showSection(sections.users);
         }
+    } catch (error) {
+        console.error(error);
+        alert('No se pudo cargar el usuario para editar');
     }
+}
 
-    async function deleteUser(id) {
-        if (!confirm('¿Estás seguro de eliminar este usuario?')) return;
-        try {
-            const response = await fetch(`${API_BASE_URL}/users/${id}`, {
-                method: 'DELETE',
-                credentials: 'include'
-            });
-            if (!response.ok) throw new Error('Error al eliminar usuario');
-            fetchUsers();
-        } catch (error) {
-            console.error(error);
-            alert('No se pudo eliminar el usuario');
-        }
+// Eliminar usuario
+async function deleteUser(id) {
+    if (!confirm('¿Estás seguro de eliminar este usuario?')) return;
+    try {
+        const response = await fetch(`${API_BASE_URL}/users/${id}`, {
+            method: 'DELETE',
+            credentials: 'include'
+        });
+        if (!response.ok) throw new Error('Error al eliminar usuario');
+        alert('Usuario eliminado correctamente');
+        fetchUsers();
+    } catch (error) {
+        console.error(error);
+        alert('No se pudo eliminar el usuario');
     }
+}
 
-    // Funciones para CRUD de ofertas
-    async function editOffer(id) {
-        try {
-            const offer = await fetchData(`offers/${id}`);
-            if (offer) {
-                // Llenar formulario de edición de oferta
-                // (Implementar según tus campos de formulario)
-                console.log('Editar oferta:', offer);
-                alert('Función de edición de oferta a implementar');
-            }
-        } catch (error) {
-            console.error(error);
-            alert('No se pudo cargar la oferta para editar');
-        }
-    }
+// Manejo del formulario de usuario (crear / editar)
+userForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
 
-    async function deleteOffer(id) {
-        if (!confirm('¿Estás seguro de eliminar esta oferta?')) return;
-        try {
-            const response = await fetch(`${API_BASE_URL}/offers/${id}`, {
-                method: 'DELETE',
-                credentials: 'include'
-            });
-            if (!response.ok) throw new Error('Error al eliminar oferta');
-            fetchOffers();
-        } catch (error) {
-            console.error(error);
-            alert('No se pudo eliminar la oferta');
-        }
-    }
+    const id = parseInt(document.getElementById('userId').value);
+    const userData = {
+        nombre: document.getElementById('nombre').value,
+        email: document.getElementById('email').value,
+        es_empresa: document.getElementById('esEmpresa').value === '1'
+    };
 
-    // Manejo de formulario de usuario
-    userForm.addEventListener('submit', async (e) => {
-        e.preventDefault();
-        const id = parseInt(document.getElementById('userId').value);
-        const userData = {
-            nombre: document.getElementById('nombre').value,
-            email: document.getElementById('email').value,
-            es_empresa: document.getElementById('esEmpresa').value === '1'
-        };
+    try {
+        const response = await fetch(`${API_BASE_URL}/users${id ? `/${id}` : ''}`, {
+            method: id ? 'PUT' : 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            credentials: 'include',
+            body: JSON.stringify(userData)
+        });
 
-        try {
-            const response = await fetch(`${API_BASE_URL}/users${id ? `/${id}` : ''}`, {
-                method: id ? 'PUT' : 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                credentials: 'include',
-                body: JSON.stringify(userData)
-            });
+        if (!response.ok) throw new Error('Error al guardar el usuario');
 
-            if (!response.ok) throw new Error('Error al guardar usuario');
-            
-            fetchUsers();
-            userFormSection.style.display = 'none';
-            userForm.reset();
-        } catch (error) {
-            console.error(error);
-            alert('No se pudo guardar el usuario');
-        }
-    });
-
-    // Botón cancelar formulario de usuario
-    document.getElementById('btnCancel').addEventListener('click', () => {
+        alert(id ? 'Usuario actualizado correctamente' : 'Usuario creado exitosamente');
+        fetchUsers();
         userFormSection.style.display = 'none';
         userForm.reset();
-    });
+    } catch (error) {
+        console.error('Error al guardar el usuario:', error);
+        alert('No se pudo guardar el usuario');
+    }
+});
+
+// Botón cancelar formulario de usuario
+document.getElementById('btnCancel').addEventListener('click', () => {
+    userFormSection.style.display = 'none';
+    userForm.reset();
+});
+
+// ==================== CRUD OFERTAS ====================
+const offerForm = document.getElementById('offerForm');
+const offerFormSection = document.getElementById('offerFormSection');
+const formTitle = document.getElementById('formTitle');
+const btnCancelOffer = document.getElementById('btnCancelOffer');
+
+// Editar oferta (mostrar formulario con datos)
+async function editOffer(id) {
+    try {
+        const response = await fetch(`${API_BASE_URL}/offers/${id}`);
+        if (!response.ok) throw new Error('Error al obtener la oferta');
+
+        const oferta = await response.json();
+
+        document.getElementById('offerId').value = oferta.id;
+        document.getElementById('titulo').value = oferta.titulo;
+        document.getElementById('ubicacion').value = oferta.ubicacion || '';
+        document.getElementById('requisitos').value = oferta.requisitos || '';
+        document.getElementById('descripcion').value = oferta.descripcion;
+        document.getElementById('fechaPublicacion').value = new Date(oferta.fecha_publicacion).toISOString().split('T')[0];
+
+        formTitle.textContent = 'Editar Oferta';
+        offerFormSection.style.display = 'block';
+    } catch (error) {
+        console.error(error);
+        alert('No se pudo cargar la oferta para editar');
+    }
+}
+
+// Eliminar oferta
+async function deleteOffer(id) {
+    if (!confirm('¿Estás seguro de eliminar esta oferta?')) return;
+
+    try {
+        const response = await fetch(`${API_BASE_URL}/offers/${id}`, {
+            method: 'DELETE',
+            credentials: 'include'
+        });
+
+        if (!response.ok) throw new Error('Error al eliminar la oferta');
+        alert('Oferta eliminada correctamente');
+        fetchEmpleos(); // Recargar tabla
+    } catch (error) {
+        console.error(error);
+        alert('No se pudo eliminar la oferta');
+    }
+}
+
+// Cancelar edición / creación
+btnCancelOffer.addEventListener('click', () => {
+    offerFormSection.style.display = 'none';
+    offerForm.reset();
+});
+
+// Crear o actualizar oferta
+offerForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+
+    const id = document.getElementById('offerId').value;
+    const titulo = document.getElementById('titulo').value;
+    const descripcion = document.getElementById('descripcion').value;
+    const fechaPublicacion = document.getElementById('fechaPublicacion').value;
+    const ubicacion = document.getElementById('ubicacion').value;
+    const requisitos = document.getElementById('requisitos').value;
+
+    const method = id ? 'PUT' : 'POST';
+    const url = id ? `${API_BASE_URL}/offers/${id}` : `${API_BASE_URL}/offers`;
+
+    try {
+        const response = await fetch(url, {
+            method,
+            headers: { 'Content-Type': 'application/json' },
+            credentials: 'include',
+            body: JSON.stringify({
+                titulo,
+                descripcion,
+                fecha_publicacion: fechaPublicacion,
+                ubicacion,
+                requisitos
+            })
+        });
+        
+
+        if (!response.ok) throw new Error('Error al guardar la oferta');
+
+        alert(id ? 'Oferta actualizada correctamente' : 'Oferta creada exitosamente');
+        offerFormSection.style.display = 'none';
+        offerForm.reset();
+        fetchEmpleos(); // Refrescar la tabla sin recargar
+    } catch (error) {
+        console.error(error);
+        alert('Error al guardar la oferta');
+    }
+});
 
     // Mostrar dashboard por defecto
     showSection(sections.dashboard);

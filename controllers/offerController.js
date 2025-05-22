@@ -34,15 +34,18 @@ const empleoController = {
 
     updateEmpleo: async (req, res) => {
         try {
-            const { titulo, descripcion, ubicacion, requisitos, idEmpleador, categoriaId } = req.body;
+            const { titulo, descripcion, ubicacion, requisitos,  fecha_publicacion } = req.body;
+            console.log('Datos recibidos para actualizar empleo:', req.body);
+
+                    console.log('Datos recibidos:', { titulo, descripcion, ubicacion, requisitos, fecha_publicacion });
+
             const affectedRows = await EmpleoModel.updateEmpleo(
                 req.params.id,
                 titulo,
                 descripcion,
                 ubicacion,
                 requisitos,
-                idEmpleador,
-                categoriaId
+                fecha_publicacion
             );
             if (affectedRows === 0) return res.status(404).json({ message: 'Empleo no encontrado' });
             res.json({ message: 'Empleo actualizado' });

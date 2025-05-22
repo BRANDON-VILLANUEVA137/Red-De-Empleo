@@ -21,17 +21,16 @@ const EmpleoModel = {
         return rows[0];
     },
 
-    updateEmpleo: async (id, titulo, descripcion, ubicacion, requisitos, idEmpleador, categoriaId) => {
+    updateEmpleo: async (id, titulo, descripcion, ubicacion, requisitos, fecha_publicacion) => {
         const [result] = await db.query(
             `UPDATE empleos SET 
                 titulo = ?, 
                 descripcion = ?, 
                 ubicacion = ?, 
                 requisitos = ?, 
-                id_empleador = ?, 
-                categoria_id = ?
+                fecha_publicacion = ?
              WHERE id = ?`,
-            [titulo, descripcion, ubicacion, requisitos, idEmpleador, categoriaId, id]
+            [titulo, descripcion, ubicacion, requisitos, fecha_publicacion, id]
         );
         return result.affectedRows;
     },
