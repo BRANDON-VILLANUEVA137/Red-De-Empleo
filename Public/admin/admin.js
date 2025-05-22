@@ -180,7 +180,13 @@ async function editUser(id) {
             document.getElementById('userId').value = user.id;
             document.getElementById('nombre').value = user.nombre;
             document.getElementById('email').value = user.correo;
-            document.getElementById('esEmpresa').value = user.id_rol === 2 ? '1' : '0';
+          // Convierte id_rol del backend a valor del select
+            let selectValue = '0';
+            if (user.id_rol === 2) selectValue = '1'; // Empresa
+            else if (user.id_rol === 3) selectValue = '2'; // Admin
+                // Usuario se mantiene como '0'
+            document.getElementById('esEmpresa').value = selectValue;
+
             userFormSection.style.display = 'block';
             showSection(sections.users);
         }
@@ -209,33 +215,41 @@ async function deleteUser(id) {
 
 // Manejo del formulario de usuario (crear / editar)
     userForm.addEventListener('submit', async (e) => {
-        e.preventDefault();
+    e.preventDefault();
 
-        const id = parseInt(document.getElementById('userId').value);
-        const userData = {
-            nombre: document.getElementById('nombre').value,
-            correo: document.getElementById('email').value,
-            id_rol: document.getElementById('esEmpresa').value === '1' ? 2 : 1    };
+    const id = parseInt(document.getElementById('userId').value);
+    const rolSelect = document.getElementById('esEmpresa').value;
 
-        try {
-            const response = await fetch(`${API_BASE_URL}/users${id ? `/${id}` : ''}`, {
-                method: id ? 'PUT' : 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                credentials: 'include',
-                body: JSON.stringify(userData)
-            });
+    let id_rol = 2; // Usuario por defecto
+    if (rolSelect === '1') id_rol = 1; // Empresa
+    else if (rolSelect === '2') id_rol = 3; // Admin
 
-            if (!response.ok) throw new Error('Error al guardar el usuario');
+    const userData = {
+        nombre: document.getElementById('nombre').value,
+        correo: document.getElementById('email').value,
+        id_rol: id_rol
+    };
 
-            alert(id ? 'Usuario actualizado correctamente' : 'Usuario creado exitosamente');
-            fetchUsers();
-            userFormSection.style.display = 'none';
-            userForm.reset();
-        } catch (error) {
-            console.error('Error al guardar el usuario:', error);
-            alert('No se pudo guardar el usuario');
-        }
-    });
+    try {
+        const response = await fetch(`${API_BASE_URL}/users${id ? `/${id}` : ''}`, {
+            method: id ? 'PUT' : 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            credentials: 'include',
+            body: JSON.stringify(userData)
+        });
+
+        if (!response.ok) throw new Error('Error al guardar el usuario');
+
+        alert(id ? 'Usuario actualizado correctamente' : 'Usuario creado exitosamente');
+        fetchUsers();
+        userFormSection.style.display = 'none';
+        userForm.reset();
+    } catch (error) {
+        console.error('Error al guardar el usuario:', error);
+        alert('No se pudo guardar el usuario');
+    }
+});
+
 
 // Botón cancelar formulario de usuario
 document.getElementById('btnCancel').addEventListener('click', () => {
