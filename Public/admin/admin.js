@@ -171,8 +171,8 @@ async function editUser(id) {
         if (user) {
             document.getElementById('userId').value = user.id;
             document.getElementById('nombre').value = user.nombre;
-            document.getElementById('email').value = user.correo || user.email;
-            document.getElementById('esEmpresa').value = user.es_empresa ? '1' : '0';
+            document.getElementById('email').value = user.correo;
+            document.getElementById('esEmpresa').value = user.id_rol ? '1' : '0';
             userFormSection.style.display = 'block';
             showSection(sections.users);
         }

@@ -44,8 +44,8 @@ const userController = {
     },
     updateUser: async (req, res) => {
         try {
-            const { nombre, email, esEmpresa } = req.body;
-            const affectedRows = await UserModel.updateUser(req.params.id, nombre, email, esEmpresa);
+            const { nombre, correo, id_rol } = req.body;
+            const affectedRows = await UserModel.updateUser(req.params.id, nombre, correo, id_rol);
             if (affectedRows === 0) return res.status(404).json({ message: 'Usuario no encontrado' });
             res.json({ message: 'Usuario actualizado' });
         } catch (error) {
