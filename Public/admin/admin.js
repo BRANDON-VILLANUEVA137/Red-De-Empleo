@@ -79,10 +79,18 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    async function fetchUsers() {
-        const usersData = await fetchData('users');
+    async function fetchUsers(searchQuery = '') {
+        const endpoint = searchQuery ? `users?search=${encodeURIComponent(searchQuery)}` : 'users';
+        const usersData = await fetchData(endpoint);
         if (usersData) renderUsersTable(usersData);
     }
+
+    // Add event listener for user search input
+    const userSearchInput = document.getElementById('userSearchInput');
+    userSearchInput.addEventListener('input', (e) => {
+        const searchValue = e.target.value.trim();
+        fetchUsers(searchValue);
+    });
 
     async function fetchEmpleos() {
     const empleosData = await fetchData('offers'); // Asegúrate de que el endpoint sea '/empleos'

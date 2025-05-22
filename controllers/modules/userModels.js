@@ -14,8 +14,15 @@ const UserModel = {
         );
         return result.insertId;
     },
-    getAllUsers: async () => {
-        const [rows] = await db.query('SELECT id, nombre, correo, id_rol FROM usuarios');
+    getAllUsers: async (search = '') => {
+        let query = 'SELECT id, nombre, correo, id_rol FROM usuarios';
+        let params = [];
+        if (search) {
+            query += ' WHERE nombre LIKE ? OR correo LIKE ?';
+            const searchPattern = `%${search}%`;
+            params = [searchPattern, searchPattern];
+        }
+        const [rows] = await db.query(query, params);
         return rows;
     },
     getUserById: async (id) => {

@@ -3,7 +3,8 @@ import UserModel from './modules/userModels.js';
 const userController = {
     getAllUsers: async (req, res) => {
         try {
-            const users = await UserModel.getAllUsers();
+            const search = req.query.search || '';
+            const users = await UserModel.getAllUsers(search);
             // Map id_rol to tipoCuenta string
             const usersWithTipoCuenta = users.map(user => {
                 let tipoCuenta = 'Usuario';
