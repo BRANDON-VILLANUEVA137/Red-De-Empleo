@@ -1,23 +1,21 @@
 /* Estilos generales que ya tienes */
-*{
-    font-family:Arial, Helvetica, sans-serif;
+* {
+    font-family: Arial, Helvetica, sans-serif;
     margin: 0;
     padding: 0;
     box-sizing: border-box;
 }
 
-
-body{
+body {
     display: flex;
     justify-content: center;
     align-items: center;
     min-height: 100vh;   
     background-image: url(/Images/Login_found.webp);
     background-size: cover;
-    
 }
 
-.fondo{
+.fondo {
     position: relative;
     width: 390px;
     min-height: 520px;
@@ -30,20 +28,21 @@ body{
     justify-content: center;
     align-items: center;
     overflow: hidden;
-    padding: 40px ;
+    padding: 40px;
     z-index: 2;
 }
 
-.fondo.active{
-    height: 525px;
+.fondo.active {
+    height: 625px;
 }
 
-
 .fondo .container_form {
-    width: 90%;
-    padding: 40px;
+    width: 94%;
+    padding: 43px;
     position: absolute; /* Agregado para que ambos formularios se posicionen en el mismo lugar */
     transition: transform 0.17s ease;
+    background-color: rgba(238, 235, 235, 0.5); /* Fondo blanco semitransparente */
+    border-radius: 10px; /* Bordes redondeados para el contenedor */
 }
 
 .fondo .container_form.login {
@@ -62,23 +61,23 @@ body{
     transform: translateX(0); /* Register se muestra cuando se activa la clase .active */
 }  
 
- .container_form h2{
+.container_form h2 {
     position: relative;
     font-size: 2em;
-    color: black;
+    color: #333; /* Color más oscuro para el título */
     text-align: center;
 }
 
 /* Ajustes a los contenedores de inputs */
- .Input_Container{
+.Input_Container {
     position: relative;
     margin: 30px 0;
     height: 50px;
-    width:100%;
-    border-bottom: 2px solid #fff;
+    width: 100%;
+    border-bottom: 2px solid #020202;
 }
 
-.Input_Container label{
+.Input_Container label {
     position: absolute;
     top: 50%;
     left: 5px;
@@ -87,8 +86,7 @@ body{
     font-weight: bold;
     transition: .6s;
     z-index: 1;
-
-
+    color: #333; /* Color más oscuro para el label */
 }
 
 .Input_Container input:focus ~ label,
@@ -96,49 +94,47 @@ body{
     top: -10px;
     left: 5px;
     font-size: 0.9rem;
-    color: #000000; /* Asegura que el label se mantenga visible */
+    color: #000; /* Asegura que el label se mantenga visible */
 }
 
-.Input_Container input{
-    width:100%;
+.Input_Container input {
+    width: 100%;
     height: 100%;
     background-color: transparent;
     border: none;
     outline: none;
     font-size: 1em;
     padding: -35px 0 5px;
-    color:#fff;
+    color: #000; /* Cambiar a un color más oscuro para el texto */
 }
 
-.Input_Container i{
+.Input_Container i {
     position: absolute;
-    color: #fff;
+    color: #000000;
     font-size: 1.5rem;
     right: 8px;
 }
 
 /* Estilos para la sección de olvidar contraseña y opciones adicionales */
-
-.Olvidar{
+.Olvidar {
     margin: -15px 0 15px;
     font-size: .9em;
-    color: #000;
+    color: #000; /* Color más oscuro para el texto */
     display: flex;
     justify-content: center;
 }
 
-.Olvidar label input{
+.Olvidar label input {
     margin: 3px;
 }
 
-.Olvidar a{
-    color: #fff;
-    text-decoration: none;
+.Olvidar a {
+    color: #000000;
     transition: .3s;
     font-size: .9em;
 }
 
-.Olvidar a:hover{
+.Olvidar a:hover {
     text-decoration: underline;
 }
 
@@ -146,15 +142,13 @@ body{
     padding: 5px;
 }
 
-
 /* Botón genérico */
-
-button{
-    width:100%;
+button {
+    width: 100%;
     height: 45px;
     border-radius: 40px;
-    background:#fff;
-    border: none;
+    background: #fff;
+    border: solid 2px #000;
     font-weight: bold;
     cursor: pointer;
     outline: none;
@@ -164,28 +158,24 @@ button{
 
 .Registrar, .Iniciar {
     font-size: .8rem;
-    color: #fff;
+    color: #0e0d0d;
     text-align: center;
     margin: 20px 0 10px;   
 }
 
-.Registrar p a, .Iniciar p a{
-    text-decoration: none;
-    color: #fff;
+.Registrar p a, .Iniciar p a {
+    color: #000;
     font-weight: bold;
     transition: .3s;
 }
- 
 
-.capa{
+.capa {
     position: absolute;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
     background: #1c1c1d;
-    opacity:0.4;
+    opacity: 0.4;
     mix-blend-mode: overlay;
 }
-
- 
