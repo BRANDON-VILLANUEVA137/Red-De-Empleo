@@ -1,52 +1,65 @@
-import OfferModel from './modules/offerModels.js';
+import EmpleoModel from './modules/offerModels.js';
 
-const offerController = {
-getAllOffers: async (req, res) => {
+const empleoController = {
+    getAllEmpleos: async (req, res) => {
         try {
-            const offers = await OfferModel.getAllOffers();
-            res.json(offers);
+            const empleos = await EmpleoModel.getAllEmpleos();
+            res.json(empleos);
         } catch (error) {
-            console.error('Error in getAllOffers:', error);
-            res.status(500).json({ message: 'Error al obtener ofertas' });
+            console.error('Error en getAllEmpleos:', error);
+            res.status(500).json({ message: 'Error al obtener empleos' });
         }
     },
-    getOfferById: async (req, res) => {
+
+    getEmpleoById: async (req, res) => {
         try {
-            const offer = await OfferModel.getOfferById(req.params.id);
-            if (!offer) return res.status(404).json({ message: 'Oferta no encontrada' });
-            res.json(offer);
+            const empleo = await EmpleoModel.getEmpleoById(req.params.id);
+            if (!empleo) return res.status(404).json({ message: 'Empleo no encontrado' });
+            res.json(empleo);
         } catch (error) {
-            res.status(500).json({ message: 'Error al obtener oferta' });
+            res.status(500).json({ message: 'Error al obtener empleo' });
         }
     },
-    createOffer: async (req, res) => {
+
+    createEmpleo: async (req, res) => {
         try {
-            const { titulo, descripcion, empresaId, fechaPublicacion } = req.body;
-            const id = await OfferModel.createOffer(titulo, descripcion, empresaId, fechaPublicacion);
-            res.status(201).json({ message: 'Oferta creada', id });
+            const { titulo, descripcion, ubicacion, requisitos, idEmpleador, categoriaId } = req.body;
+            const id = await EmpleoModel.createEmpleo(titulo, descripcion, ubicacion, requisitos, idEmpleador, categoriaId);
+            res.status(201).json({ message: 'Empleo creado', id });
         } catch (error) {
-            res.status(500).json({ message: 'Error al crear oferta' });
+            console.error('Error en createEmpleo:', error);
+            res.status(500).json({ message: 'Error al crear empleo' });
         }
     },
-    updateOffer: async (req, res) => {
+
+    updateEmpleo: async (req, res) => {
         try {
-            const { titulo, descripcion, empresaId, fechaPublicacion } = req.body;
-            const affectedRows = await OfferModel.updateOffer(req.params.id, titulo, descripcion, empresaId, fechaPublicacion);
-            if (affectedRows === 0) return res.status(404).json({ message: 'Oferta no encontrada' });
-            res.json({ message: 'Oferta actualizada' });
+            const { titulo, descripcion, ubicacion, requisitos, idEmpleador, categoriaId } = req.body;
+            const affectedRows = await EmpleoModel.updateEmpleo(
+                req.params.id,
+                titulo,
+                descripcion,
+                ubicacion,
+                requisitos,
+                idEmpleador,
+                categoriaId
+            );
+            if (affectedRows === 0) return res.status(404).json({ message: 'Empleo no encontrado' });
+            res.json({ message: 'Empleo actualizado' });
         } catch (error) {
-            res.status(500).json({ message: 'Error al actualizar oferta' });
+            res.status(500).json({ message: 'Error al actualizar empleo' });
         }
     },
-    deleteOffer: async (req, res) => {
+
+    deleteEmpleo: async (req, res) => {
         try {
-            const affectedRows = await OfferModel.deleteOffer(req.params.id);
-            if (affectedRows === 0) return res.status(404).json({ message: 'Oferta no encontrada' });
-            res.json({ message: 'Oferta eliminada' });
+            const affectedRows = await EmpleoModel.deleteEmpleo(req.params.id);
+            if (affectedRows === 0) return res.status(404).json({ message: 'Empleo no encontrado' });
+            res.json({ message: 'Empleo eliminado' });
         } catch (error) {
-            res.status(500).json({ message: 'Error al eliminar oferta' });
+            res.status(500).json({ message: 'Error al eliminar empleo' });
         }
     }
 };
 
-export default offerController;
+export default empleoController;

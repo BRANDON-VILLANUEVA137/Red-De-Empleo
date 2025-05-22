@@ -82,10 +82,10 @@ document.addEventListener('DOMContentLoaded', () => {
         if (usersData) renderUsersTable(usersData);
     }
 
-    async function fetchOffers() {
-        const offersData = await fetchData('offers');
-        if (offersData) renderOffersTable(offersData);
-    }
+    async function fetchEmpleos() {
+    const empleosData = await fetchData('empleos'); // Asegúrate de que el endpoint sea '/empleos'
+    if (empleosData) renderEmpleosTable(empleosData);
+}
 
     // Funciones para renderizar tablas
     function renderUsersTable(usersData) {
@@ -112,25 +112,28 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    function renderOffersTable(offersData) {
-        tableBodies.offers.innerHTML = '';
-        offersData.forEach(offer => {
-            const empresaId = offer.empresa_id || offer.empresaId;
-            const fechaPublicacion = offer.fecha_publicacion || offer.fechaPublicacion;
-            const tr = document.createElement('tr');
-            tr.innerHTML = `
-                <td>${offer.id}</td>
-                <td>${offer.titulo}</td>
-                <td>${offer.descripcion}</td>
-                <td>${empresaId}</td>
-                <td>${fechaPublicacion}</td>
-                <td>
-                    <button class="editOfferBtn" data-id="${offer.id}">Editar</button>
-                    <button class="deleteOfferBtn" data-id="${offer.id}">Eliminar</button>
-                </td>
-            `;
-            tableBodies.offers.appendChild(tr);
-        });
+    function renderEmpleosTable(empleosData) {
+    tableBodies.offers.innerHTML = '';
+    empleosData.forEach(empleo => {
+        const fechaPublicacion = new Date(empleo.fecha_publicacion).toLocaleDateString('es-ES');
+
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+            <td>${empleo.id}</td>
+            <td>${empleo.titulo}</td>
+            <td>${empleo.descripcion || ''}</td>
+            <td>${empleo.ubicacion || '-'}</td>
+            <td>${empleo.requisitos || '-'}</td>
+            <td>${empleo.id_empleador}</td>
+            <td>${empleo.categoria_id || '-'}</td>
+            <td>${fechaPublicacion}</td>
+            <td>
+                <button class="editEmpleoBtn" data-id="${empleo.id}">Editar</button>
+                <button class="deleteEmpleoBtn" data-id="${empleo.id}">Eliminar</button>
+            </td>
+        `;
+        tableBodies.offers.appendChild(tr);
+             });
     }
 
     // Event listeners para navegación
