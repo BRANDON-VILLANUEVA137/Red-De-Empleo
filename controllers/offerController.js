@@ -1,11 +1,12 @@
 import OfferModel from './modules/offerModels.js';
 
 const offerController = {
-    getAllOffers: async (req, res) => {
+getAllOffers: async (req, res) => {
         try {
             const offers = await OfferModel.getAllOffers();
             res.json(offers);
         } catch (error) {
+            console.error('Error in getAllOffers:', error);
             res.status(500).json({ message: 'Error al obtener ofertas' });
         }
     },
