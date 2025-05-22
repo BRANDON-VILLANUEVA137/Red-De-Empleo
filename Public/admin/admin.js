@@ -172,7 +172,7 @@ async function editUser(id) {
             document.getElementById('userId').value = user.id;
             document.getElementById('nombre').value = user.nombre;
             document.getElementById('email').value = user.correo;
-            document.getElementById('esEmpresa').value = user.id_rol ? '1' : '0';
+            document.getElementById('esEmpresa').value = user.id_rol === 2 ? '1' : '0';
             userFormSection.style.display = 'block';
             showSection(sections.users);
         }
@@ -207,8 +207,7 @@ userForm.addEventListener('submit', async (e) => {
     const userData = {
         nombre: document.getElementById('nombre').value,
         email: document.getElementById('email').value,
-        id_rol: document.getElementById('esEmpresa').value === '1'
-    };
+        id_rol: document.getElementById('esEmpresa').value === '1' ? 2 : 1    };
 
     try {
         const response = await fetch(`${API_BASE_URL}/users${id ? `/${id}` : ''}`, {
