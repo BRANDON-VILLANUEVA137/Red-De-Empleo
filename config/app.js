@@ -77,12 +77,23 @@ app.use('/api/company', companyRoutes);
 app.use('/api/user', userRoutes);
 // Rutas API
 app.use('/api', loginRoutes);
-app.use('/api/admin', adminRoutes);
+app.use('/api/admin', (req, res, next) => {
+  if (req.path === '/offers') {
+    console.log(`Request to /api/admin/offers - Method: ${req.method} - Time: ${new Date().toISOString()}`);
+  }
+  next();
+}, adminRoutes);
 app.use('/api/company', companyRoutes);
 app.use('/api/user', userRoutes);
 // Ruta de prueba
 app.get('/api/status', (req, res) => {
   res.json({ status: 'active', version: '1.0.0' });
+});
+
+// Middleware global para manejo de errores
+app.use((err, req, res, next) => {
+  console.error('Global error handler:', err);
+  res.status(500).json({ message: 'Error interno del servidor' });
 });
 
 // Inicio del servidor
