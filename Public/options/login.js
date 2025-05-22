@@ -72,7 +72,7 @@ registerForm.addEventListener("submit", (event) => {
     .then(data => {
       alert(data.mensaje);
       if (data.mensaje === 'Usuario registrado') {
-        window.location.href = "/login";
+        window.location.href = "/views/login";
       }
     })
     .catch(error => console.error("Error:", error));
