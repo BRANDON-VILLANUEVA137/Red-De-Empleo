@@ -30,49 +30,10 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    async function fetchDashboardCounts() {
-        try {
-            console.log('Fetching dashboard counts...');
-            const usersResponse = await fetch(`${API_BASE_URL}/users/max-id`, {
-                method: 'GET',
-                credentials: 'include'
-            });
-            console.log('Users max ID response status:', usersResponse.status);
-            const offersResponse = await fetch(`${API_BASE_URL}/offers/max-id`, {
-                method: 'GET',
-                credentials: 'include'
-            });
-            console.log('Offers max ID response status:', offersResponse.status);
-
-            if (!usersResponse.ok || !offersResponse.ok) {
-                throw new Error('Error al obtener datos para el dashboard');
-            }
-
-            const usersData = await usersResponse.json();
-            const offersData = await offersResponse.json();
-
-            console.log('Users max ID data:', usersData);
-            console.log('Offers max ID data:', offersData);
-
-            const maxUserId = usersData.maxId || 0;
-            const maxOfferId = offersData.maxId || 0;
-
-            document.getElementById('totalUsers').textContent = maxUserId;
-            document.getElementById('totalOffers').textContent = maxOfferId;
-            // Since reports section is removed, set totalReports to 0 or remove
-            document.getElementById('totalReports').textContent = '0';
-        } catch (error) {
-            console.error(error);
-            document.getElementById('totalUsers').textContent = '--';
-            document.getElementById('totalOffers').textContent = '--';
-            document.getElementById('totalReports').textContent = '--';
-        }
-    }
-
     // Base URL for backend API
+
     const API_BASE_URL = 'https://red-de-empleo-production.up.railway.app/api/admin';
 
-    // Funciones para obtener datos desde el backend con prefijo /api/admin
     async function fetchUsers() {
         try {
             const response = await fetch(`${API_BASE_URL}/users`, {
@@ -108,7 +69,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // Funciones para renderizar tablas con datos reales y mapeo de campos snake_case a camelCase
     const usersTableBody = document.querySelector('#usersTable tbody');
     function renderUsersTable(usersData) {
         usersTableBody.innerHTML = '';
@@ -116,6 +76,7 @@ document.addEventListener('DOMContentLoaded', () => {
             let tipoCuenta = 'Usuario';
             if (user.id_rol === 1) tipoCuenta = 'Empresa';
             else if (user.id_rol === 3) tipoCuenta = 'Admin';
+
             const tr = document.createElement('tr');
             tr.innerHTML = `
                 <td>${user.id}</td>
@@ -134,27 +95,39 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     const offersTableBody = document.querySelector('#offersTable tbody');
-    async function getEmpresaNombre(empresaId) {
+    async function getEmpresaDetails(empresaId) {
         try {
             const response = await fetch(`${API_BASE_URL}/empleados/${empresaId}`);
             if (!response.ok) throw new Error('Error al obtener empresa');
             const empresa = await response.json();
-            return empresa.nombre || empresa.name || 'Desconocida';
+            return {
+                nombre: empresa.nombre || empresa.name || 'Desconocida',
+                ubicacion: empresa.ubicacion || 'Desconocida',
+                requisitos: empresa.requisitos || 'No especificado'
+            };
         } catch (error) {
             console.error(error);
-            return 'Desconocida';
+            return {
+                nombre: 'Desconocida',
+                ubicacion: 'Desconocida',
+                requisitos: 'No especificado'
+            };
         }
     }
 
     async function renderOffersTable(offersData) {
         offersTableBody.innerHTML = '';
         for (const offer of offersData) {
+            const empresaId = offer.empresa_id || offer.empresaId;
             const fechaPublicacion = offer.fecha_publicacion || offer.fechaPublicacion;
+            const empresaDetails = await getEmpresaDetails(empresaId);
             const tr = document.createElement('tr');
             tr.innerHTML = `
                 <td>${offer.id}</td>
                 <td>${offer.titulo}</td>
                 <td>${offer.descripcion}</td>
+                <td>${empresaDetails.ubicacion}</td>
+                <td>${empresaDetails.requisitos}</td>
                 <td>${fechaPublicacion}</td>
                 <td>
                     <button class="editOfferBtn" data-id="${offer.id}">Editar</button>
@@ -165,7 +138,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // Event delegation para botones editar y eliminar usuarios
     usersTableBody.addEventListener('click', (e) => {
         if (e.target.classList.contains('editUserBtn')) {
             const userId = e.target.getAttribute('data-id');
@@ -175,6 +147,7 @@ document.addEventListener('DOMContentLoaded', () => {
             deleteUser(userId);
         }
     });
+
 
     // Event delegation para botones editar y eliminar ofertas
     offersTableBody.addEventListener('click', (e) => {
@@ -196,7 +169,8 @@ document.addEventListener('DOMContentLoaded', () => {
             document.getElementById('offerId').value = offer.id;
             document.getElementById('titulo').value = offer.titulo;
             document.getElementById('descripcion').value = offer.descripcion;
-            document.getElementById('empresaId').value = offer.empresa_id || offer.empresaId;
+            // Eliminado el campo empresaId ya que no existe en el formulario
+            // document.getElementById('empresaId').value = offer.empresa_id || offer.empresaId;
             document.getElementById('fechaPublicacion').value = offer.fecha_publicacion || offer.fechaPublicacion;
             document.getElementById('offerFormSection').style.display = 'block';
             showSection(offersSection);
@@ -261,6 +235,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     // Funciones editUser y deleteUser actualizadas para trabajar con datos reales
+
     async function editUser(id) {
         try {
             const response = await fetch(`${API_BASE_URL}/users/${id}`);
@@ -291,7 +266,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // Manejo del formulario de usuario
     const userForm = document.getElementById('userForm');
     userForm.addEventListener('submit', async (e) => {
         e.preventDefault();
@@ -328,12 +302,10 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    // Cancelar formulario
     document.getElementById('btnCancel').addEventListener('click', () => {
         document.getElementById('userFormSection').style.display = 'none';
     });
 
-    // Ocultar botones de agregar si existen
     ['btnAddUser', 'btnAddOffer', 'btnAddReport', 'btnAddMetric'].forEach(id => {
         const btn = document.getElementById(id);
         if (btn) {
@@ -357,4 +329,80 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     showSection(dashboardSection);
+
+    const administradoresLink = document.getElementById('administradoresLink');
+    const administradoresSection = document.getElementById('administradoresSection');
+    const administradoresTableBody = document.querySelector('#administradoresTable tbody');
+    const btnAddAdministrador = document.getElementById('btnAddAdministrador');
+    const administradorFormSection = document.getElementById('administradorFormSection');
+    const administradorForm = document.getElementById('administradorForm');
+    const btnCancelAdministrador = document.getElementById('btnCancelAdministrador');
+
+    administradoresLink.addEventListener('click', (e) => {
+        e.preventDefault();
+        showSection(administradoresSection);
+        fetchAdministradores();
+    });
+
+    btnAddAdministrador.addEventListener('click', () => {
+        administradorFormSection.style.display = 'block';
+        btnAddAdministrador.style.display = 'none';
+    });
+
+    btnCancelAdministrador.addEventListener('click', () => {
+        administradorFormSection.style.display = 'none';
+        btnAddAdministrador.style.display = 'block';
+        administradorForm.reset();
+    });
+
+    async function fetchAdministradores() {
+        try {
+            const response = await fetch(`${API_BASE_URL}/administradores`, {
+                method: 'GET',
+                credentials: 'include'
+            });
+            if (!response.ok) throw new Error('Error al obtener administradores');
+            const administradoresData = await response.json();
+            renderAdministradoresTable(administradoresData);
+        } catch (error) {
+            console.error(error);
+            alert('No se pudieron cargar los administradores');
+        }
+    }
+
+    function renderAdministradoresTable(administradoresData) {
+        administradoresTableBody.innerHTML = '';
+        administradoresData.forEach(admin => {
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+                <td>${admin.id}</td>
+                <td>${admin.nombre}</td>
+                <td>${admin.correo}</td>
+                <td>${admin.permisos || ''}</td>
+            `;
+            administradoresTableBody.appendChild(tr);
+        });
+    }
+
+    administradorForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const id_usuario = parseInt(document.getElementById('id_usuario').value);
+        const permisos = document.getElementById('permisos').value;
+
+        try {
+            const response = await fetch(`${API_BASE_URL}/administradores`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ id_usuario, permisos })
+            });
+            if (!response.ok) throw new Error('Error al asignar administrador');
+            fetchAdministradores();
+            administradorFormSection.style.display = 'none';
+            btnAddAdministrador.style.display = 'block';
+            administradorForm.reset();
+        } catch (error) {
+            console.error(error);
+            alert('No se pudo asignar el administrador');
+        }
+    });
 });
