@@ -207,7 +207,7 @@ userForm.addEventListener('submit', async (e) => {
     const userData = {
         nombre: document.getElementById('nombre').value,
         email: document.getElementById('email').value,
-        es_empresa: document.getElementById('esEmpresa').value === '1'
+        id_rol: document.getElementById('esEmpresa').value === '1'
     };
 
     try {
