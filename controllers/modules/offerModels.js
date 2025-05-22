@@ -1,32 +1,45 @@
 import db from '../../config/db.js';
 
-const OfferModel = {
-    createOffer: async (titulo, descripcion, empresaId, fechaPublicacion) => {
+const EmpleoModel = {
+    createEmpleo: async (titulo, descripcion, ubicacion, requisitos, idEmpleador, categoriaId) => {
         const [result] = await db.query(
-            'INSERT INTO ofertas (titulo, descripcion, empresa_id, fecha_publicacion) VALUES (?, ?, ?, ?)',
-            [titulo, descripcion, empresaId, fechaPublicacion]
+            `INSERT INTO empleos 
+                (titulo, descripcion, ubicacion, requisitos, id_empleador, categoria_id) 
+             VALUES (?, ?, ?, ?, ?, ?)`,
+            [titulo, descripcion, ubicacion, requisitos, idEmpleador, categoriaId]
         );
         return result.insertId;
     },
-    getAllOffers: async () => {
-        const [rows] = await db.query('SELECT * FROM ofertas');
+
+    getAllEmpleos: async () => {
+        const [rows] = await db.query('SELECT * FROM empleos');
         return rows;
     },
-    getOfferById: async (id) => {
-        const [rows] = await db.query('SELECT * FROM ofertas WHERE id = ?', [id]);
+
+    getEmpleoById: async (id) => {
+        const [rows] = await db.query('SELECT * FROM empleos WHERE id = ?', [id]);
         return rows[0];
     },
-    updateOffer: async (id, titulo, descripcion, empresaId, fechaPublicacion) => {
+
+    updateEmpleo: async (id, titulo, descripcion, ubicacion, requisitos, idEmpleador, categoriaId) => {
         const [result] = await db.query(
-            'UPDATE ofertas SET titulo = ?, descripcion = ?, empresa_id = ?, fecha_publicacion = ? WHERE id = ?',
-            [titulo, descripcion, empresaId, fechaPublicacion, id]
+            `UPDATE empleos SET 
+                titulo = ?, 
+                descripcion = ?, 
+                ubicacion = ?, 
+                requisitos = ?, 
+                id_empleador = ?, 
+                categoria_id = ?
+             WHERE id = ?`,
+            [titulo, descripcion, ubicacion, requisitos, idEmpleador, categoriaId, id]
         );
         return result.affectedRows;
     },
-    deleteOffer: async (id) => {
-        const [result] = await db.query('DELETE FROM ofertas WHERE id = ?', [id]);
+
+    deleteEmpleo: async (id) => {
+        const [result] = await db.query('DELETE FROM empleos WHERE id = ?', [id]);
         return result.affectedRows;
     }
 };
 
-export default OfferModel;
+export default EmpleoModel;

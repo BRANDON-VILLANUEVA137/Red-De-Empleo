@@ -1,7 +1,6 @@
 import express from 'express';
 import userController from '../userController.js';
 import offerController from '../offerController.js';
-import reportController from '../reportController.js';
 import metricController from '../metricController.js';
 import { getAllAdministradores, addAdministrador } from '../modules/adminModels.js';
 
@@ -17,19 +16,19 @@ router.put('/users/:id', userController.updateUser);
 router.delete('/users/:id', userController.deleteUser);
 
 // Rutas para ofertas
-router.get('/offers', offerController.getAllOffers);
-router.get('/offers/:id', offerController.getOfferById);
-router.post('/offers', offerController.createOffer);
-router.put('/offers/:id', offerController.updateOffer);
-router.delete('/offers/:id', offerController.deleteOffer);
+router.get('/offers', offerController.getAllEmpleos);
+router.get('/offers/:id', offerController.getEmpleoById);
+router.post('/offers', offerController.createEmpleo);
+router.put('/offers/:id', offerController.updateEmpleo);
+router.delete('/offers/:id', offerController.deleteEmpleo);
 
-// Rutas para reportes
+/*/ Rutas para reportes
 router.get('/reports', reportController.getAllReports);
 router.get('/reports/:id', reportController.getReportById);
 router.post('/reports', reportController.createReport);
 router.put('/reports/:id', reportController.updateReport);
 router.delete('/reports/:id', reportController.deleteReport);
-
+*/
 // Rutas para métricas
 router.get('/metrics', metricController.getAllMetrics);
 router.get('/metrics/:id', metricController.getMetricById);
